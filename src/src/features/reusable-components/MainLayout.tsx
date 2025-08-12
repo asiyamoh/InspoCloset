@@ -7,12 +7,12 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="min-h-screen pb-16">
+    <div className="min-h-screen pb-16 bg-ivoryCream">
       {/* Top header with search bar */}
       <AppHeader />
       
       {/* Main content area */}
-      <main className="flex-1">
+      <main className="flex-1 px-4 py-6">
         {children}
       </main>
       

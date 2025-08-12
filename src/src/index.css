@@ -9,6 +9,19 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #FFF8F0; /* Ivory Cream */
+  background-image: 
+    /* Soft blush tape corners */
+    radial-gradient(circle at 20px 20px, rgba(250, 218, 221, 0.3) 0%, transparent 50px),
+    radial-gradient(circle at calc(100% - 20px) 20px, rgba(250, 218, 221, 0.3) 0%, transparent 50px),
+    radial-gradient(circle at 20px calc(100% - 20px), rgba(250, 218, 221, 0.3) 0%, transparent 50px),
+    radial-gradient(circle at calc(100% - 20px) calc(100% - 20px), rgba(250, 218, 221, 0.3) 0%, transparent 50px),
+    /* Faint doodles in corners */
+    radial-gradient(circle at 40px 40px, rgba(217, 165, 179, 0.1) 0%, transparent 30px),
+    radial-gradient(circle at calc(100% - 40px) 40px, rgba(183, 199, 163, 0.1) 0%, transparent 30px),
+    radial-gradient(circle at 40px calc(100% - 40px), rgba(235, 217, 196, 0.1) 0%, transparent 30px),
+    radial-gradient(circle at calc(100% - 40px) calc(100% - 40px), rgba(199, 195, 217, 0.1) 0%, transparent 30px);
+  min-height: 100vh;
 }
 
 code {
