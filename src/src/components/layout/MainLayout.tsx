@@ -1,4 +1,4 @@
-import { AppNavigation } from './AppNavigation';
+import { AppNavigation } from '../navigation/AppNavigation';
 import { AppHeader } from './AppHeader';
 
 interface MainLayoutProps {

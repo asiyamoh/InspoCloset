@@ -1,5 +1,5 @@
-import { TopSearchBar } from './TopSearchBar';
-import { Avatar } from './Avatar';
+import { TopSearchBar } from '../navigation/TopSearchBar';
+import { Avatar } from '../ui/Avatar';
 
 export function AppHeader() {
   return (
