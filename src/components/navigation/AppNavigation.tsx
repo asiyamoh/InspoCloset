@@ -1,41 +1,48 @@
 import { BottomNavigation, BottomNavigationItem } from './bottom-navigation';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 
 export function AppNavigation() {
-  // You can add logic here to determine which page is active
-  // For now, we'll set home as active as an example
-  const currentPage = 'home';
+  const navigate = useNavigate();
+  const router = useRouter();
+  
+  // Get current route pathname
+  const currentPath = router.state.location.pathname;
+
+  const handleNavigation = (to: string) => {
+    navigate({ to });
+  };
 
   return (
     <BottomNavigation>
       <BottomNavigationItem
         icon="🏠"
         label="Home"
-        href="/"
-        active={currentPage === 'home'}
+        onClick={() => handleNavigation('/home')}
+        active={currentPath === '/home'}
       />
       <BottomNavigationItem
         icon="👰"
         label="Brides"
-        href="/brides"
-        // active={currentPage === 'brides'}
+        onClick={() => handleNavigation('/brides')}
+        active={currentPath === '/brides'}
       />
       <BottomNavigationItem
         icon="👗"
         label="Wedding"
-        href="/wedding"
-        // active={currentPage === 'wedding'}
+        onClick={() => handleNavigation('/wedding')}
+        active={currentPath === '/wedding'}
       />
       <BottomNavigationItem
         icon="🕊️"
         label="Nikah"
-        href="/nikah"
-        // active={currentPage === 'nikah'}
+        onClick={() => handleNavigation('/nikah')}
+        active={currentPath === '/nikah'}
       />
       <BottomNavigationItem
         icon="📷"
         label="Upload"
-        href="/upload"
-        // active={currentPage === 'upload'}
+        onClick={() => handleNavigation('/upload')}
+        active={currentPath === '/upload'}
       />
     </BottomNavigation>
   );

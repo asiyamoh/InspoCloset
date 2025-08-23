@@ -26,22 +26,17 @@ export function BottomNavigation({
 export function BottomNavigationItem({
   icon,
   label,
-  href,
   onClick,
   active = false,
 }: {
   icon: ReactNode;
   label: string;
-  href?: string;
   onClick?: () => void;
   active?: boolean;
 }) {
-  const Wrapper = href ? 'a' : 'button';
-
   return (
-    <Wrapper
-      {...(href ? { href } : {})}
-      {...(onClick ? { onClick } : {})}
+    <button
+      onClick={onClick}
       className={clsx(
         'flex flex-col items-center justify-center w-full h-full hover:bg-champagneBeige/30 group',
         active && 'text-skyBlue'
@@ -63,6 +58,6 @@ export function BottomNavigationItem({
       >
         {label}
       </span>
-    </Wrapper>
+    </button>
   );
 }
