@@ -1,5 +1,6 @@
 import { MainLayout } from "../../components/layout/MainLayout";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { BrideGrid } from "./components/BrideGrid";
+import { NewBrideButton } from "./components/NewBrideButton";
 
 export function BridesPage() {
   return (
@@ -11,18 +12,11 @@ export function BridesPage() {
           </h1>
           <p className="text-sageGreen text-lg">Manage your brides</p>
         </div>
-        <div className="bg-white/60 p-4 rounded-lg border border-dustyRose/20 shadow-photo-glue">
-          <p className="text-sageGreen text-sm">
-            Brides feature coming soon...
-          </p>
-        </div>
+
+        <BrideGrid />
       </div>
 
-      {/* Floating New Bride Button */}
-              <button className="fixed bottom-20 right-2 bg-dustyRose hover:bg-dustyRose/90 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 px-4 py-3 group">
-        <PlusIcon className="w-5 h-5 transition-transform group-hover:scale-110" />
-        Add New Bride
-      </button>
+      <NewBrideButton />
     </MainLayout>
   );
 }
