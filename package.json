@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@tanstack/react-router": "^1.44.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@tanstack/react-router": "^1.44.2",
     "clsx": "^2.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -19,8 +20,8 @@
     "generate": "npx @tanstack/router-cli generate"
   },
   "devDependencies": {
-    "@types/node": "^20.19.11",
     "@tanstack/router-plugin": "^1.44.3",
+    "@types/node": "^20.19.11",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
