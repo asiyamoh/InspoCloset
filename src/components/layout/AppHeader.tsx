@@ -1,6 +1,7 @@
 import { TopSearchBar } from "../navigation/TopSearchBar";
 import { Avatar } from "../ui/Avatar";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { useBrideDetail } from "../../features/bride/hooks/useBrideDetail";
 
 export function AppHeader() {
   const navigate = useNavigate();
@@ -12,8 +13,15 @@ export function AppHeader() {
 
   const pathname = routerState.location.pathname;
 
+  // Check if we're on a bride detail page
+  const brideDetailMatch = pathname.match(/^\/bride-detail\/(.+)$/);
+  const brideId = brideDetailMatch ? brideDetailMatch[1] : null;
+  const bride = brideId ? useBrideDetail(brideId) : null;
+
   const title =
-    pathname === "/home"
+    bride
+      ? bride.name
+      : pathname === "/home"
       ? "InspoCloset"
       : pathname === "/brides"
       ? "Brides"

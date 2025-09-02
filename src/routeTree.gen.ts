@@ -15,6 +15,7 @@ import { Route as NikahRouteImport } from './routes/nikah';
 import { Route as HomeRouteImport } from './routes/home';
 import { Route as BridesRouteImport } from './routes/brides';
 import { Route as IndexRouteImport } from './routes/index';
+import { Route as BrideDetailBrideIdRouteImport } from './routes/bride-detail.$brideId';
 
 const WeddingRoute = WeddingRouteImport.update({
   id: '/wedding',
@@ -46,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const BrideDetailBrideIdRoute = BrideDetailBrideIdRouteImport.update({
+  id: '/bride-detail/$brideId',
+  path: '/bride-detail/$brideId',
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/nikah': typeof NikahRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
+  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/nikah': typeof NikahRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
+  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -71,12 +79,27 @@ export interface FileRoutesById {
   '/nikah': typeof NikahRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
+  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/brides' | '/home' | '/nikah' | '/upload' | '/wedding';
+  fullPaths:
+    | '/'
+    | '/brides'
+    | '/home'
+    | '/nikah'
+    | '/upload'
+    | '/wedding'
+    | '/bride-detail/$brideId';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/brides' | '/home' | '/nikah' | '/upload' | '/wedding';
+  to:
+    | '/'
+    | '/brides'
+    | '/home'
+    | '/nikah'
+    | '/upload'
+    | '/wedding'
+    | '/bride-detail/$brideId';
   id:
     | '__root__'
     | '/'
@@ -84,7 +107,8 @@ export interface FileRouteTypes {
     | '/home'
     | '/nikah'
     | '/upload'
-    | '/wedding';
+    | '/wedding'
+    | '/bride-detail/$brideId';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -94,6 +118,7 @@ export interface RootRouteChildren {
   NikahRoute: typeof NikahRoute;
   UploadRoute: typeof UploadRoute;
   WeddingRoute: typeof WeddingRoute;
+  BrideDetailBrideIdRoute: typeof BrideDetailBrideIdRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/bride-detail/$brideId': {
+      id: '/bride-detail/$brideId';
+      path: '/bride-detail/$brideId';
+      fullPath: '/bride-detail/$brideId';
+      preLoaderRoute: typeof BrideDetailBrideIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -150,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   NikahRoute: NikahRoute,
   UploadRoute: UploadRoute,
   WeddingRoute: WeddingRoute,
+  BrideDetailBrideIdRoute: BrideDetailBrideIdRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

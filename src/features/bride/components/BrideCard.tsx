@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import type { Bride } from "../types";
 
 type BrideCardProps = {
@@ -5,8 +6,17 @@ type BrideCardProps = {
 };
 
 export function BrideCard({ bride }: BrideCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate({ to: `/bride-detail/${bride.id}` });
+  };
+
   return (
-    <div className="bg-white/60 rounded-lg border border-dustyRose/20 shadow-photo-glue overflow-hidden">
+    <div
+      onClick={handleClick}
+      className="bg-white/60 rounded-lg border border-dustyRose/20 shadow-photo-glue overflow-hidden cursor-pointer transition-transform hover:scale-105 active:scale-95"
+    >
       <div className="relative">
         <img
           src={bride.coverImageUrl}
@@ -22,4 +32,4 @@ export function BrideCard({ bride }: BrideCardProps) {
       </div>
     </div>
   );
-} 
+}
