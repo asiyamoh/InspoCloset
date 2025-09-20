@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProfileRole {
+  USER
+  ADMIN
+}
+
+model Profile {
+  id               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName        String?     @map("first_name")
+  lastName         String?     @map("last_name")
+  email            String      @unique
+  role             ProfileRole @default(USER)
+  profilePictureUrl String?    @map("profile_picture_url")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  brides           Bride[]
+  
+  @@map("profiles")
+}
+
+model Bride {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  email           String
+  profilePicture  String?  @map("profile_picture")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  profileId       String   @map("profile_id") @db.Uuid
+  profile         Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  folders         Folder[]
+  pictureLocations PictureLocation[]
+  
+  @@map("brides")
+}
+
+model Folder {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  iconPicture String?  @map("icon_picture")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  brideId     String?  @map("bride_id") @db.Uuid
+  bride       Bride?   @relation(fields: [brideId], references: [id], onDelete: Cascade)
+  categories  Category[]
+  pictureLocations PictureLocation[]
+  
+  @@map("folders")
+}
+
+model Category {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  iconPicture String?  @map("icon_picture")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  folderId    String   @map("folder_id") @db.Uuid
+  folder      Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  pictureLocations PictureLocation[]
+  
+  @@map("categories")
+}
+
+model Picture {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  pictureLocations PictureLocation[]
+  pictureTags      PictureTag[]
+  
+  @@map("pictures")
+}
+
+model Tag {
+  id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
+  
+  // Relations
+  pictureTags PictureTag[]
+  
+  @@map("tags")
+}
+
+model PictureLocation {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  pictureId  String   @map("picture_id") @db.Uuid
+  picture    Picture  @relation(fields: [pictureId], references: [id], onDelete: Cascade)
+  folderId   String?  @map("folder_id") @db.Uuid
+  folder     Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  categoryId String?  @map("category_id") @db.Uuid
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  brideId    String?  @map("bride_id") @db.Uuid
+  bride      Bride?   @relation(fields: [brideId], references: [id], onDelete: Cascade)
+  
+  @@map("picture_locations")
+}
+
+model PictureTag {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  pictureId String   @map("picture_id") @db.Uuid
+  picture   Picture  @relation(fields: [pictureId], references: [id], onDelete: Cascade)
+  tagId     String   @map("tag_id") @db.Uuid
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@unique([pictureId, tagId])
+  @@map("picture_tags")
+}
