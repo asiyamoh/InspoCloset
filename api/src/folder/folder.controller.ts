@@ -1,0 +1,158 @@
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException, UseInterceptors, UploadedFiles, Req } from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { FolderService, SubcategoryData } from './folder.service';
+import { CreateFolderDto } from './dto/create-folder.dto';
+import { FolderResponseDto } from './dto/folder-response.dto';
+import { Express } from 'express';
+
+@Controller('folders')
+export class FolderController {
+  constructor(private readonly folderService: FolderService) {}
+
+  @Post()
+  @UseInterceptors(AnyFilesInterceptor())
+  async createFolder(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: any
+  ): Promise<FolderResponseDto> {
+    try {
+      // Parse FormData
+      const formData = req.body;
+      
+      // Extract folder metadata
+      const createFolderDto: CreateFolderDto = {
+        name: formData.folderName,
+        brideId: formData.brideId || undefined,
+        iconPicture: formData.folderIcon ? 'uploaded' : undefined,
+        hasSubcategories: formData.hasSubcategories === 'true',
+      };
+
+      // Parse subcategories data
+      const subcategoriesData: SubcategoryData[] = [];
+      
+      if (createFolderDto.hasSubcategories) {
+        // Find all subcategory indices
+        const subcategoryIndices = new Set<string>();
+        Object.keys(formData).forEach(key => {
+          const match = key.match(/^subcategories\[(\d+)\]\.name$/);
+          if (match) {
+            subcategoryIndices.add(match[1]);
+          }
+        });
+
+        // Process each subcategory
+        for (const index of subcategoryIndices) {
+          const subcategoryName = formData[`subcategories[${index}].name`];
+          
+          // Find subcategory icon file
+          const subcategoryIconFile = files.find(f => f.fieldname === `subcategories[${index}].icon`);
+          
+          // Find pictures for this subcategory
+          const pictures: { file: Express.Multer.File; tags: string[] }[] = [];
+          const pictureIndices = new Set<string>();
+          
+          Object.keys(formData).forEach(key => {
+            const match = key.match(new RegExp(`^subcategories\\[${index}\\]\\.pictures\\[(\\d+)\\]\\.tags$`));
+            if (match) {
+              pictureIndices.add(match[1]);
+            }
+          });
+
+          // Process each picture for this subcategory
+          for (const pictureIndex of pictureIndices) {
+            const pictureFile = files.find(f => f.fieldname === `subcategories[${index}].pictures[${pictureIndex}].file`);
+            const tagsString = formData[`subcategories[${index}].pictures[${pictureIndex}].tags`];
+            
+            if (pictureFile) {
+              let tags: string[] = [];
+              if (tagsString) {
+                try {
+                  tags = JSON.parse(tagsString);
+                } catch (error) {
+                  console.warn(`Failed to parse tags for subcategory ${index}, picture ${pictureIndex}:`, error);
+                }
+              }
+              
+              pictures.push({
+                file: pictureFile,
+                tags,
+              });
+            }
+          }
+
+          subcategoriesData.push({
+            name: subcategoryName,
+            icon: subcategoryIconFile,
+            pictures,
+          });
+        }
+      }
+
+      return await this.folderService.createFolder(createFolderDto, files, subcategoriesData);
+    } catch (error) {
+      console.error('Error creating folder:', error);
+      throw new HttpException(
+        'Failed to create folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get()
+  async getAllFolders(): Promise<FolderResponseDto[]> {
+    try {
+      return await this.folderService.getAllFolders();
+    } catch (error) {
+      throw new HttpException(
+        'Failed to fetch folders',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get(':id')
+  async getFolderById(@Param('id') id: string): Promise<FolderResponseDto> {
+    try {
+      const folder = await this.folderService.getFolderById(id);
+      if (!folder) {
+        throw new HttpException('Folder not found', HttpStatus.NOT_FOUND);
+      }
+      return folder;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Failed to fetch folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put(':id')
+  async updateFolder(
+    @Param('id') id: string,
+    @Body() updateData: Partial<CreateFolderDto>
+  ): Promise<FolderResponseDto> {
+    try {
+      return await this.folderService.updateFolder(id, updateData);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to update folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Delete(':id')
+  async deleteFolder(@Param('id') id: string): Promise<void> {
+    try {
+      await this.folderService.deleteFolder(id);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to delete folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+}

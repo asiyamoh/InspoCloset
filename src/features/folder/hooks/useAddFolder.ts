@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { FolderFormData, CreateFolderRequest } from '../types';
+import { FolderFormData } from '../types';
+import { API_URL } from '../../../utils/constants';
 
 export function useAddFolder() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +24,7 @@ export function useAddFolder() {
     return newErrors;
   };
 
-  const createFolder = async (data: FolderFormData): Promise<void> => {
+  const createFolder = async (data: FolderFormData, brideId?: string): Promise<void> => {
     setIsSubmitting(true);
     setErrors({});
 
@@ -35,28 +36,65 @@ export function useAddFolder() {
     }
 
     try {
-      const requestData: CreateFolderRequest = {
-        name: data.name.trim(),
-        subcategories: data.hasSubcategories
-          ? data.subcategories.map(sub => ({
-              name: sub.name.trim(),
-              picture: typeof sub.picture === 'string' ? sub.picture : undefined,
-              tags: sub.tags
-            }))
-          : undefined
-      };
+      const formData = new FormData();
 
-      // TODO: Replace with actual API call
-      console.log('Creating folder:', requestData);
+      // Add folder metadata
+      formData.append('folderName', data.name.trim());
+      if (brideId) {
+        formData.append('brideId', brideId);
+      }
+      formData.append('hasSubcategories', data.hasSubcategories.toString());
+
+      // Add folder icon if provided
+      if (data.icon && data.icon instanceof File) {
+        formData.append('folderIcon', data.icon);
+      }
+
+      // Add subcategories data
+      if (data.hasSubcategories && data.subcategories.length > 0) {
+        data.subcategories.forEach((subcategory, subIndex) => {
+          // Add subcategory name
+          formData.append(`subcategories[${subIndex}].name`, subcategory.name.trim());
+
+          // Add subcategory icon if provided
+          if (subcategory.icon && subcategory.icon instanceof File) {
+            formData.append(`subcategories[${subIndex}].icon`, subcategory.icon);
+          }
+
+          // Add pictures for this subcategory
+          if (subcategory.pictures && subcategory.pictures.length > 0) {
+            subcategory.pictures.forEach((picture, picIndex) => {
+              // Add picture file
+              formData.append(`subcategories[${subIndex}].pictures[${picIndex}].file`, picture.file);
+
+              // Add tags as JSON string
+              formData.append(`subcategories[${subIndex}].pictures[${picIndex}].tags`, JSON.stringify(picture.tags));
+            });
+          }
+        });
+      }
+
+      // Make API call
+      const response = await fetch(`${API_URL}/folders`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create folder');
+      }
+
+      await response.json();
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Reset form on success
       setIsSubmitting(false);
     } catch (error) {
       console.error('Error creating folder:', error);
-      setErrors({ general: 'Failed to create folder. Please try again.' });
+      setErrors({ 
+        general: error instanceof Error 
+          ? error.message 
+          : 'Failed to create folder. Please try again.' 
+      });
       setIsSubmitting(false);
     }
   };
