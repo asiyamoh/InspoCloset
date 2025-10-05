@@ -27,6 +27,14 @@ export interface FolderResponse {
     createdAt: string;
     updatedAt: string;
   }[];
+  categories?: {
+    id: string;
+    name: string;
+    iconPicture?: string;
+    folderId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }
 
 export interface UploadPicturesRequest {
@@ -64,6 +72,9 @@ export interface TagSuggestion {
 export const folderApi = {
   createFolder: (data: CreateFolderRequest): Promise<FolderResponse> =>
     post<FolderResponse>('folders', data),
+
+  getAllFolders: (): Promise<FolderResponse[]> =>
+    get<FolderResponse[]>('folders'),
 
   getFoldersByBride: (brideId: string): Promise<FolderResponse[]> =>
     get<FolderResponse[]>(`folders/bride/${brideId}`),

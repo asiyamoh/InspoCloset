@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Subcategory, PictureUpload } from '../types';
+import { Subcategory } from '../types';
 
 interface Step3_1PhotoReviewProps {
   subcategories: Subcategory[];
