@@ -1,5 +1,4 @@
 import { IconSelector } from '../../../components/ui/IconSelector';
-import { FormInput } from '../../../components/ui/FormInput';
 import { Button } from '../../../components/ui/Button';
 import { Subcategory } from '../types';
 
@@ -41,98 +40,109 @@ export function Step2Subcategories({
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Subcategories
+    <div className="space-y-8 py-4">
+      {/* Header */}
+      <div className="text-center">
+        <h3 className="text-xl font-semibold text-sageGreen mb-2">
+          Want to organize your photos further?
         </h3>
-        <p className="text-sm text-gray-600">
-          Add subcategories to organize your photos. Each subcategory can have its own name and icon.
+        <p className="text-sm text-gray-500">
+          Add subcategories to group similar photos together
         </p>
       </div>
 
-      <div className="flex items-center justify-between">
-        <label htmlFor="has-subcategories" className="text-sm font-medium text-gray-700">
-          Do you want to add subcategories?
-        </label>
-        <input
-          type="checkbox"
-          id="has-subcategories"
-          checked={hasSubcategories}
-          onChange={(e) => onToggleHasSubcategories(e.target.checked)}
-          className="h-4 w-4 text-dustyRose focus:ring-dustyRose border-gray-300 rounded"
-        />
+      {/* Toggle */}
+      <div className="max-w-md mx-auto">
+        <div className="flex items-center justify-between p-4 border border-dustyRose/30 rounded-lg bg-champagneBeige/30">
+          <div>
+            <p className="text-sm font-medium text-dustyRose">Add subcategories</p>
+            <p className="text-xs text-dustyRose/70">Create smaller groups within this folder</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={hasSubcategories}
+              onChange={(e) => onToggleHasSubcategories(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-dustyRose/30 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-skyBlue/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-ivoryCream after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-ivoryCream after:border-dustyRose/40 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-skyBlue"></div>
+          </label>
+        </div>
       </div>
 
+      {/* Subcategories */}
       {hasSubcategories && (
-        <>
-          {/* Subcategories List */}
-          <div className="space-y-4">
-            {subcategories.map((subcategory, index) => (
-              <div key={subcategory.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-sm font-medium text-gray-700">
-                    Subcategory {index + 1}
-                  </h4>
-                  <button
-                    onClick={() => subcategory.id && removeSubcategory(subcategory.id)}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                  >
-                    Remove
-                  </button>
-                </div>
+        <div className="space-y-6">
+          {subcategories.map((subcategory, index) => (
+            <div key={subcategory.id} className="border border-dustyRose/30 rounded-lg p-6 bg-champagneBeige/20">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-medium text-dustyRose">
+                  Subcategory {index + 1}
+                </h4>
+                <button
+                  onClick={() => subcategory.id && removeSubcategory(subcategory.id)}
+                  className="text-sm text-dustyRose hover:text-dustyRose/80 transition-colors"
+                >
+                  Remove
+                </button>
+              </div>
 
-                <div className="space-y-4">
-                  {/* Subcategory Name */}
-                  <FormInput
-                    label="Subcategory Name"
+              <div className="space-y-4">
+                {/* Subcategory Name */}
+                <div>
+                  <label className="block text-sm font-medium text-sageGreen mb-2">
+                    Name <span className="text-dustyRose">*</span>
+                  </label>
+                  <input
+                    type="text"
                     value={subcategory.name}
                     onChange={(e) => updateSubcategory(subcategory.id!, { name: e.target.value })}
-                    placeholder="Enter subcategory name..."
-                    error={errors[`subcategory-${index}`]}
-                    required
+                    placeholder="e.g., Ceremony, Reception, Getting Ready"
+                    className="w-full px-3 py-2 border border-dustyRose/30 rounded-lg focus:ring-2 focus:ring-skyBlue focus:border-skyBlue transition-colors placeholder:text-dustyRose/60 bg-ivoryCream"
                   />
+                  {errors[`subcategory-${index}`] && (
+                    <p className="text-sm text-dustyRose mt-1">{errors[`subcategory-${index}`]}</p>
+                  )}
+                </div>
 
-                  {/* Subcategory Icon */}
+                {/* Subcategory Icon */}
+                <div>
+                  <p className="text-sm text-dustyRose/70 mb-2">Icon (Optional)</p>
                   <IconSelector
-                    label="Subcategory Icon"
                     currentIcon={subcategory.icon}
                     onIconSelected={(icon) => updateSubcategory(subcategory.id!, { icon })}
                   />
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
 
           {/* Add Subcategory Button */}
-          <Button
-            onClick={addSubcategory}
-            outline
-            className="w-full"
-          >
-            + Add Subcategory
-          </Button>
-        </>
+          <div className="text-center">
+            <Button
+              onClick={addSubcategory}
+              outline
+              className="px-6 py-2"
+            >
+              + Add Another Subcategory
+            </Button>
+          </div>
+        </div>
       )}
 
-      {/* Instructions */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+      {/* Skip Option */}
+      {!hasSubcategories && (
+        <div className="text-center py-8">
+          <div className="inline-flex items-center px-4 py-2 bg-champagneBeige/30 rounded-lg border border-dustyRose/20">
+            <svg className="w-5 h-5 text-dustyRose/60 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-          </div>
-          <div className="ml-3">
-            <h4 className="text-sm font-medium text-green-800">
-              Ready for Photos?
-            </h4>
-            <p className="text-sm text-green-700 mt-1">
-              Next, you'll be able to upload photos for each subcategory and add tags to help organize them. You can upload multiple photos at once and add individual tags to each photo.
+            <p className="text-sm text-dustyRose/70">
+              You can always add subcategories later
             </p>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

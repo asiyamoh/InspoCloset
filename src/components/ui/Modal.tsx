@@ -41,7 +41,7 @@ export function Modal({
             className={clsx(
               className,
               sizes[size],
-              'row-start-2 w-full min-w-0 rounded-t-md bg-white p-[--gutter] shadow-photo-glue-md ring-1 ring-dustyRose/20 [--gutter:theme(spacing.8)] sm:mb-auto sm:rounded-md forced-colors:outline',
+              'row-start-2 w-full min-w-0 rounded-t-md bg-ivoryCream p-[--gutter] shadow-photo-glue-md ring-1 ring-dustyRose/20 [--gutter:theme(spacing.8)] sm:mb-auto sm:rounded-md forced-colors:outline',
               'transition duration-100 data-[closed]:translate-y-12 data-[closed]:opacity-0 data-[enter]:ease-out data-[leave]:ease-in sm:data-[closed]:translate-y-0 sm:data-[closed]:data-[enter]:scale-95',
             )}
           >
