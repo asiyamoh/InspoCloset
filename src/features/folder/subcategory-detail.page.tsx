@@ -4,11 +4,9 @@ import { MainLayout } from "../../components/layout/MainLayout";
 import { SubcategoryDetailContent } from "./components/SubcategoryDetailContent";
 
 export function SubcategoryDetailPage() {
-  console.log('in the SubcategoryDetailPage')
   const { folderId, subcategoryId } = useParams({ 
     from: "/folder-details/$folderId/subcategory/$subcategoryId" 
   });
-  console.log('what is happening', folderId, subcategoryId)
   const { folder, loading, error } = useFolderDetail(folderId);
 
   if (loading) {

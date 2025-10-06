@@ -11,7 +11,6 @@ export function FolderDetailContent({ folder }: FolderDetailContentProps) {
   const folderId = folder.id;
 
   const handleSubcategoryClick = (subcategoryId: string) => {
-    console.log('i have been clicked:', subcategoryId, folderId)
     navigate({ to: `/folder-details/${folderId}/subcategory/${subcategoryId}` });
   };
 

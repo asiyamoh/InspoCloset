@@ -14,7 +14,6 @@ interface SubcategoryDetailContentProps {
 }
 
 export function SubcategoryDetailContent({ folder, subcategory }: SubcategoryDetailContentProps) {
-  console.log('in the subcategoty')
   const navigate = useNavigate();
 
   const handleBackToFolder = () => {
