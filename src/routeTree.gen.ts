@@ -15,7 +15,9 @@ import { Route as NikahRouteImport } from './routes/nikah';
 import { Route as HomeRouteImport } from './routes/home';
 import { Route as BridesRouteImport } from './routes/brides';
 import { Route as IndexRouteImport } from './routes/index';
+import { Route as FolderFolderIdRouteImport } from './routes/folder.$folderId';
 import { Route as BrideDetailBrideIdRouteImport } from './routes/bride-detail.$brideId';
+import { Route as FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport } from './routes/folder-details.$folderId.subcategory.$subcategoryId';
 
 const WeddingRoute = WeddingRouteImport.update({
   id: '/wedding',
@@ -47,11 +49,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any);
+const FolderFolderIdRoute = FolderFolderIdRouteImport.update({
+  id: '/folder/$folderId',
+  path: '/folder/$folderId',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const BrideDetailBrideIdRoute = BrideDetailBrideIdRouteImport.update({
   id: '/bride-detail/$brideId',
   path: '/bride-detail/$brideId',
   getParentRoute: () => rootRouteImport,
 } as any);
+const FolderDetailsFolderIdSubcategorySubcategoryIdRoute =
+  FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport.update({
+    id: '/folder-details/$folderId/subcategory/$subcategoryId',
+    path: '/folder-details/$folderId/subcategory/$subcategoryId',
+    getParentRoute: () => rootRouteImport,
+  } as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
@@ -61,6 +74,8 @@ export interface FileRoutesByFullPath {
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
+  '/folder/$folderId': typeof FolderFolderIdRoute;
+  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
@@ -70,6 +85,8 @@ export interface FileRoutesByTo {
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
+  '/folder/$folderId': typeof FolderFolderIdRoute;
+  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
@@ -80,6 +97,8 @@ export interface FileRoutesById {
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
+  '/folder/$folderId': typeof FolderFolderIdRoute;
+  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
@@ -90,7 +109,9 @@ export interface FileRouteTypes {
     | '/nikah'
     | '/upload'
     | '/wedding'
-    | '/bride-detail/$brideId';
+    | '/bride-detail/$brideId'
+    | '/folder/$folderId'
+    | '/folder-details/$folderId/subcategory/$subcategoryId';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
@@ -99,7 +120,9 @@ export interface FileRouteTypes {
     | '/nikah'
     | '/upload'
     | '/wedding'
-    | '/bride-detail/$brideId';
+    | '/bride-detail/$brideId'
+    | '/folder/$folderId'
+    | '/folder-details/$folderId/subcategory/$subcategoryId';
   id:
     | '__root__'
     | '/'
@@ -108,7 +131,9 @@ export interface FileRouteTypes {
     | '/nikah'
     | '/upload'
     | '/wedding'
-    | '/bride-detail/$brideId';
+    | '/bride-detail/$brideId'
+    | '/folder/$folderId'
+    | '/folder-details/$folderId/subcategory/$subcategoryId';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
@@ -119,6 +144,8 @@ export interface RootRouteChildren {
   UploadRoute: typeof UploadRoute;
   WeddingRoute: typeof WeddingRoute;
   BrideDetailBrideIdRoute: typeof BrideDetailBrideIdRoute;
+  FolderFolderIdRoute: typeof FolderFolderIdRoute;
+  FolderDetailsFolderIdSubcategorySubcategoryIdRoute: typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 
 declare module '@tanstack/react-router' {
@@ -165,11 +192,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
+    '/folder/$folderId': {
+      id: '/folder/$folderId';
+      path: '/folder/$folderId';
+      fullPath: '/folder/$folderId';
+      preLoaderRoute: typeof FolderFolderIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/bride-detail/$brideId': {
       id: '/bride-detail/$brideId';
       path: '/bride-detail/$brideId';
       fullPath: '/bride-detail/$brideId';
       preLoaderRoute: typeof BrideDetailBrideIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/folder-details/$folderId/subcategory/$subcategoryId': {
+      id: '/folder-details/$folderId/subcategory/$subcategoryId';
+      path: '/folder-details/$folderId/subcategory/$subcategoryId';
+      fullPath: '/folder-details/$folderId/subcategory/$subcategoryId';
+      preLoaderRoute: typeof FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport;
       parentRoute: typeof rootRouteImport;
     };
   }
@@ -183,6 +224,9 @@ const rootRouteChildren: RootRouteChildren = {
   UploadRoute: UploadRoute,
   WeddingRoute: WeddingRoute,
   BrideDetailBrideIdRoute: BrideDetailBrideIdRoute,
+  FolderFolderIdRoute: FolderFolderIdRoute,
+  FolderDetailsFolderIdSubcategorySubcategoryIdRoute:
+    FolderDetailsFolderIdSubcategorySubcategoryIdRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -9,6 +9,7 @@ export function FolderGrid({ folders }: FolderGridProps) {
   const navigate = useNavigate();
 
   const handleFolderClick = (folderId: string) => {
+    console.log('i have been clicked:', folderId)
     navigate({ to: `/folder/${folderId}` });
   };
 
