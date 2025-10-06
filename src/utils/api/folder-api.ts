@@ -69,6 +69,20 @@ export interface TagSuggestion {
   count: number;
 }
 
+export interface PictureResponse {
+  id: string;
+  url: string;
+  thumbnailUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  pictureTags: Array<{
+    tag: {
+      id: string;
+      name: string;
+    };
+  }>;
+}
+
 export const folderApi = {
   createFolder: (data: CreateFolderRequest): Promise<FolderResponse> =>
     post<FolderResponse>('folders', data),
@@ -93,4 +107,7 @@ export const folderApi = {
 
   getMostUsedTags: (limit: number = 3): Promise<TagSuggestion[]> =>
     get<TagSuggestion[]>(`tags/most-used?limit=${limit}`),
+
+  getPicturesByCategory: (categoryId: string): Promise<PictureResponse[]> =>
+    get<PictureResponse[]>(`pictures/category/${categoryId}`),
 };

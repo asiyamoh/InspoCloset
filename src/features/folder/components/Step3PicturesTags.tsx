@@ -7,12 +7,17 @@ interface Step3PicturesTagsProps {
   errors: Record<string, string>;
   suggestedTags: string[];
   onPhotosUploaded?: () => void;
+  // New props for single subcategory mode
+  singleSubcategoryMode?: boolean;
+  onUpload?: (pictures: PictureUpload[]) => void;
 }
 
 export function Step3PicturesTags({
   subcategories,
   onSubcategoriesChange,
-  onPhotosUploaded
+  onPhotosUploaded,
+  singleSubcategoryMode = false,
+  onUpload
 }: Step3PicturesTagsProps) {
   const handleFilesSelected = (subcategoryId: string, files: File[]) => {
     onSubcategoriesChange(
@@ -87,6 +92,15 @@ export function Step3PicturesTags({
     }
   };
 
+  const handleUpload = () => {
+    if (singleSubcategoryMode && subcategories.length > 0) {
+      const subcategory = subcategories[0];
+      if (subcategory.pictures && subcategory.pictures.length > 0 && onUpload) {
+        onUpload(subcategory.pictures);
+      }
+    }
+  };
+
   return (
     <div className="space-y-8 py-4">
       {/* Header */}
@@ -113,7 +127,7 @@ export function Step3PicturesTags({
         </div>
       ) : (
         <div className="space-y-8">
-          {subcategories.map((subcategory, subIndex) => (
+          {(singleSubcategoryMode ? subcategories.slice(0, 1) : subcategories).map((subcategory, subIndex) => (
             <div key={subcategory.id} className="border border-dustyRose/30 rounded-lg p-6 bg-champagneBeige/20">
               <div className="mb-6">
                 <h4 className="text-lg font-medium text-sageGreen mb-1">
@@ -210,6 +224,18 @@ export function Step3PicturesTags({
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+              
+              {/* Upload Button for Single Subcategory Mode */}
+              {singleSubcategoryMode && subcategory.pictures && subcategory.pictures.length > 0 && (
+                <div className="mt-6 pt-6 border-t border-dustyRose/20">
+                  <button
+                    onClick={handleUpload}
+                    className="w-full bg-sageGreen text-white px-6 py-3 rounded-lg hover:bg-sageGreen/80 transition-colors font-medium"
+                  >
+                    Upload {subcategory.pictures.length} Picture{subcategory.pictures.length !== 1 ? 's' : ''}
+                  </button>
                 </div>
               )}
             </div>

@@ -12,6 +12,9 @@ export interface Subcategory {
   name: string;
   icon: string | File | null;
   pictures: PictureUpload[];
+  folderId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface FolderFormData {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { ImageProcessingService } from './image-processing.service';
+import { TagService } from '../tag/tag.service';
 import { createClient } from '@supabase/supabase-js';
 
 export interface PictureUploadData {
@@ -31,7 +32,8 @@ export class PictureService {
 
   constructor(
     private prisma: PrismaService,
-    private imageProcessing: ImageProcessingService
+    private imageProcessing: ImageProcessingService,
+    private tagService: TagService
   ) {
     this.supabase = createClient(
       process.env.SUPABASE_URL!,
@@ -182,5 +184,56 @@ export class PictureService {
       url: imageUrl.publicUrl,
       thumbnailUrl: thumbnailUrl.publicUrl,
     };
+  }
+
+  async addPicturesToSubcategory(
+    picturesData: Array<{ file: Express.Multer.File; tags: string[] }>,
+    categoryId: string,
+    folderId: string,
+    brideId?: string
+  ): Promise<{
+    success: boolean;
+    uploadedPictures: ProcessedPicture[];
+    errors: Array<{ fileName: string; error: string }>;
+  }> {
+    const uploadedPictures: ProcessedPicture[] = [];
+    const errors: Array<{ fileName: string; error: string }> = [];
+    
+    return await this.prisma.$transaction(async (tx) => {
+      for (const pictureData of picturesData) {
+        try {
+          // REUSE existing method
+          const processedPicture = await this.processAndSavePictureInTransaction(
+            tx,
+            {
+              buffer: pictureData.file.buffer,
+              originalName: pictureData.file.originalname,
+              mimeType: pictureData.file.mimetype,
+            },
+            categoryId,
+            brideId,
+            folderId
+          );
+          
+          // REUSE existing tag assignment
+          if (pictureData.tags && pictureData.tags.length > 0) {
+            await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags);
+          }
+          
+          uploadedPictures.push(processedPicture);
+        } catch (error) {
+          errors.push({ 
+            fileName: pictureData.file.originalname, 
+            error: error instanceof Error ? error.message : 'Unknown error' 
+          });
+        }
+      }
+      
+      return { 
+        success: errors.length === 0, 
+        uploadedPictures, 
+        errors 
+      };
+    });
   }
 }

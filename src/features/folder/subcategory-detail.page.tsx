@@ -1,5 +1,6 @@
 import { useParams } from "@tanstack/react-router";
 import { useFolderDetail } from "./hooks/useFolderDetail";
+import { useSubcategoryPictures } from "./hooks/useSubcategoryPictures";
 import { MainLayout } from "../../components/layout/MainLayout";
 import { SubcategoryDetailContent } from "./components/SubcategoryDetailContent";
 
@@ -8,8 +9,9 @@ export function SubcategoryDetailPage() {
     from: "/folder-details/$folderId/subcategory/$subcategoryId" 
   });
   const { folder, loading, error } = useFolderDetail(folderId);
+  const { pictures, loading: picturesLoading, error: picturesError, refetch: refetchPictures } = useSubcategoryPictures(subcategoryId);
 
-  if (loading) {
+  if (loading || picturesLoading) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-64">
@@ -19,11 +21,11 @@ export function SubcategoryDetailPage() {
     );
   }
 
-  if (error) {
+  if (error || picturesError) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="text-red-500">Error loading folder: {error}</div>
+          <div className="text-red-500">Error loading data: {error || picturesError}</div>
         </div>
       </MainLayout>
     );
@@ -57,7 +59,9 @@ export function SubcategoryDetailPage() {
     <MainLayout>
       <SubcategoryDetailContent 
         folder={folder} 
-        subcategory={subcategory} 
+        subcategory={subcategory}
+        pictures={pictures}
+        onPicturesRefresh={refetchPictures}
       />
     </MainLayout>
   );
