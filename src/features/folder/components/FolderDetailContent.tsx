@@ -1,5 +1,6 @@
 import { FolderResponse } from "../../../utils/api/folder-api";
 import { useNavigate } from "@tanstack/react-router";
+import { FavoriteToggle } from "./FavoriteToggle";
 
 interface FolderDetailContentProps {
   folder: FolderResponse;
@@ -18,23 +19,33 @@ export function FolderDetailContent({ folder }: FolderDetailContentProps) {
     <div className="p-4 space-y-6">
       {/* Folder Header */}
       <div className="bg-white/60 p-6 rounded-lg border border-dustyRose/20 shadow-photo-glue">
-        <div className="flex items-center space-x-4">
-          <div className="text-4xl">
-            {folder.iconPicture ? (
-              <img 
-                src={folder.iconPicture} 
-                alt={folder.name}
-                className="w-12 h-12 rounded object-cover"
-              />
-            ) : (
-              '📁'
-            )}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="text-4xl">
+              {folder.iconPicture ? (
+                <img 
+                  src={folder.iconPicture} 
+                  alt={folder.name}
+                  className="w-12 h-12 rounded object-cover"
+                />
+              ) : (
+                '📁'
+              )}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-sageGreen">{folder.name}</h1>
+              <p className="text-dustyRose/70">
+                Created {new Date(folder.createdAt).toLocaleDateString()}
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-sageGreen">{folder.name}</h1>
-            <p className="text-dustyRose/70">
-              Created {new Date(folder.createdAt).toLocaleDateString()}
-            </p>
+          <div className="mt-2">
+            <FavoriteToggle 
+              folderId={folder.id}
+              onToggle={(isFavorite) => {
+                console.log(`Folder ${folder.name} is now ${isFavorite ? 'favorited' : 'unfavorited'}`);
+              }}
+            />
           </div>
         </div>
       </div>

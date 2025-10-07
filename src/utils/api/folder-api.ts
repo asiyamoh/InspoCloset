@@ -110,4 +110,7 @@ export const folderApi = {
 
   getPicturesByCategory: (categoryId: string): Promise<PictureResponse[]> =>
     get<PictureResponse[]>(`pictures/category/${categoryId}`),
+
+  getFavorites: (): Promise<FolderResponse[]> =>
+    get<FolderResponse[]>('user-favorite-folders/favorites'),
 };

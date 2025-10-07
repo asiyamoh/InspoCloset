@@ -27,6 +27,7 @@ model Profile {
   
   // Relations
   brides           Bride[]
+  favoriteFolders UserFavoriteFolder[]
   
   @@map("profiles")
 }
@@ -60,6 +61,7 @@ model Folder {
   bride       Bride?   @relation(fields: [brideId], references: [id], onDelete: Cascade)
   categories  Category[]
   pictureLocations PictureLocation[]
+  favoriteByProfiles UserFavoriteFolder[]
   
   @@map("folders")
 }
@@ -135,4 +137,19 @@ model PictureTag {
   
   @@unique([pictureId, tagId])
   @@map("picture_tags")
+}
+
+model UserFavoriteFolder {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  
+  // Relations
+  profileId String @map("profile_id") @db.Uuid
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  folderId  String @map("folder_id") @db.Uuid
+  folder    Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  
+  @@unique([profileId, folderId])
+  @@map("user_favorite_folders")
 }

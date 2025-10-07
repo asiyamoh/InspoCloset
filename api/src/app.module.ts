@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { FolderModule } from './folder/folder.module';
 import { PictureModule } from './picture/picture.module';
 import { TagModule } from './tag/tag.module';
+import { UserFavoriteFolderModule } from './user-favorite-folder/user-favorite-folder.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TagModule } from './tag/tag.module';
     FolderModule,
     PictureModule,
     TagModule,
+    UserFavoriteFolderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
