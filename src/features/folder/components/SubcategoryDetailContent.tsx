@@ -2,6 +2,7 @@ import { FolderResponse, PictureResponse } from "../../../utils/api/folder-api";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AddPicturesToSubcategoryModal } from "./AddPicturesToSubcategoryModal";
+import { EditSubcategoryModal } from "./EditSubcategoryModal";
 
 interface SubcategoryDetailContentProps {
   folder: FolderResponse;
@@ -20,6 +21,7 @@ interface SubcategoryDetailContentProps {
 export function SubcategoryDetailContent({ folder, subcategory, pictures, onPicturesRefresh }: SubcategoryDetailContentProps) {
   const navigate = useNavigate();
   const [isAddPicturesModalOpen, setIsAddPicturesModalOpen] = useState(false);
+  const [isEditSubcategoryModalOpen, setIsEditSubcategoryModalOpen] = useState(false);
 
   const handleBackToFolder = () => {
     navigate({ to: `/folder/${folder.id}` });
@@ -35,6 +37,19 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
 
   const handlePicturesUploaded = () => {
     onPicturesRefresh?.();
+  };
+
+  const handleEditSubcategoryClick = () => {
+    setIsEditSubcategoryModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditSubcategoryModalOpen(false);
+  };
+
+  const handleSubcategoryUpdated = () => {
+    // Refresh the page to show updated subcategory data
+    window.location.reload();
   };
 
   return (
@@ -136,7 +151,10 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
         >
           Add Pictures
         </button>
-        <button className="bg-dustyRose text-white px-4 py-2 rounded-lg hover:bg-dustyRose/80 transition-colors">
+        <button 
+          onClick={handleEditSubcategoryClick}
+          className="bg-dustyRose text-white px-4 py-2 rounded-lg hover:bg-dustyRose/80 transition-colors"
+        >
           Edit Subcategory
         </button>
       </div>
@@ -147,6 +165,15 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
         onClose={handleCloseModal}
         onSuccess={handlePicturesUploaded}
         folder={folder}
+        subcategory={subcategory}
+      />
+
+      {/* Edit Subcategory Modal */}
+      <EditSubcategoryModal
+        key={subcategory.id} 
+        isOpen={isEditSubcategoryModalOpen}
+        onClose={handleCloseEditModal}
+        onSuccess={handleSubcategoryUpdated}
         subcategory={subcategory}
       />
     </div>

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { FolderResponseDto, SubcategoryResponseDto } from './dto/folder-response.dto';
 import { PictureService, PictureUploadData } from '../picture/picture.service';
 import { TagService } from '../tag/tag.service';
@@ -194,6 +195,83 @@ export class FolderService {
     await this.prisma.folder.delete({
       where: { id },
     });
+  }
+
+  async updateSubcategory(
+    subcategoryId: string, 
+    updateData: UpdateSubcategoryDto, 
+    iconFile?: Express.Multer.File
+  ): Promise<SubcategoryResponseDto> {
+    // Track uploaded files for cleanup
+    const uploadedFiles: string[] = [];
+
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        try {
+          // Get current subcategory to check for existing icon
+          const currentSubcategory = await tx.category.findUnique({
+            where: { id: subcategoryId },
+          });
+
+          if (!currentSubcategory) {
+            throw new Error('Subcategory not found');
+          }
+
+          // Process new icon if provided
+          let newIconUrl: string | undefined;
+          if (iconFile) {
+            const processedIcon = await this.pictureService.processAndSaveIcon(
+              {
+                buffer: iconFile.buffer,
+                originalName: iconFile.originalname,
+                mimeType: iconFile.mimetype,
+              },
+              'category'
+            );
+            newIconUrl = processedIcon.url;
+            uploadedFiles.push(processedIcon.url);
+          }
+
+          // Update subcategory
+          const updatedSubcategory = await tx.category.update({
+            where: { id: subcategoryId },
+            data: {
+              name: updateData.name || currentSubcategory.name,
+              iconPicture: newIconUrl || currentSubcategory.iconPicture,
+            },
+          });
+
+          // Clean up old icon if new one was uploaded
+          if (iconFile && currentSubcategory.iconPicture) {
+            try {
+              const oldFilePath = currentSubcategory.iconPicture.split('/').pop();
+              if (oldFilePath) {
+                await this.supabase.storage.from('pictures').remove([oldFilePath]);
+              }
+            } catch (error) {
+              console.warn(`Failed to cleanup old icon ${currentSubcategory.iconPicture}:`, error);
+            }
+          }
+
+          return {
+            id: updatedSubcategory.id,
+            name: updatedSubcategory.name,
+            iconPicture: updatedSubcategory.iconPicture,
+            folderId: updatedSubcategory.folderId,
+            createdAt: updatedSubcategory.createdAt,
+            updatedAt: updatedSubcategory.updatedAt,
+          };
+        } catch (error) {
+          // Clean up uploaded files on failure
+          await this.cleanupUploadedFiles(uploadedFiles);
+          throw error;
+        }
+      });
+    } catch (error) {
+      // Clean up any remaining uploaded files
+      await this.cleanupUploadedFiles(uploadedFiles);
+      throw new Error(`Failed to update subcategory: ${error.message}`);
+    }
   }
 
   // Add cleanup method

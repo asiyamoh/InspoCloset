@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpExcept
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { FolderService, SubcategoryData } from './folder.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
+import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { FolderResponseDto } from './dto/folder-response.dto';
 import { Express } from 'express';
 
@@ -151,6 +152,34 @@ export class FolderController {
     } catch (error) {
       throw new HttpException(
         'Failed to delete folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Put('subcategory/:subcategoryId')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateSubcategory(
+    @Param('subcategoryId') subcategoryId: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: any
+  ) {
+    try {
+      const formData = req.body;
+      
+      // Extract update data
+      const updateData: UpdateSubcategoryDto = {
+        name: formData.name,
+      };
+
+      // Find icon file if provided
+      const iconFile = files?.find(f => f.fieldname === 'icon');
+
+      return await this.folderService.updateSubcategory(subcategoryId, updateData, iconFile);
+    } catch (error) {
+      console.error('Error updating subcategory:', error);
+      throw new HttpException(
+        'Failed to update subcategory',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
