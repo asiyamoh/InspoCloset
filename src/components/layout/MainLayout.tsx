@@ -1,4 +1,4 @@
-import { AppNavigation } from '../navigation/AppNavigation';
+import { DynamicBottomNavigation } from '../navigation/DynamicBottomNavigation';
 import { AppHeader } from './AppHeader';
 
 interface MainLayoutProps {
@@ -17,7 +17,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </main>
       
       {/* Bottom navigation */}
-      <AppNavigation />
+      <DynamicBottomNavigation />
     </div>
   );
 } 

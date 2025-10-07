@@ -83,6 +83,19 @@ export interface PictureResponse {
   }>;
 }
 
+export interface FavoriteFolderResponse {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  folder: {
+    id: string;
+    name: string;
+    iconPicture?: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 export const folderApi = {
   createFolder: (data: CreateFolderRequest): Promise<FolderResponse> =>
     post<FolderResponse>('folders', data),
@@ -111,6 +124,6 @@ export const folderApi = {
   getPicturesByCategory: (categoryId: string): Promise<PictureResponse[]> =>
     get<PictureResponse[]>(`pictures/category/${categoryId}`),
 
-  getFavorites: (): Promise<FolderResponse[]> =>
-    get<FolderResponse[]>('user-favorite-folders/favorites'),
+  getFavorites: (): Promise<FavoriteFolderResponse[]> =>
+    get<FavoriteFolderResponse[]>('user-favorite-folders/favorites'),
 };

@@ -1,9 +1,11 @@
 import { BottomNavigation, BottomNavigationItem } from './bottom-navigation';
 import { useNavigate, useRouter } from '@tanstack/react-router';
+import { useFavorites } from '../../hooks/useFavorites';
 
-export function AppNavigation() {
+export function DynamicBottomNavigation() {
   const navigate = useNavigate();
   const router = useRouter();
+  const { favorites, isLoading } = useFavorites();
   
   // Get current route pathname
   const currentPath = router.state.location.pathname;
@@ -12,8 +14,12 @@ export function AppNavigation() {
     navigate({ to });
   };
 
+  // Calculate total items for grid layout
+  const totalItems = 3 + favorites.length; // Home + Brides + Upload + favorites
+  const gridCols = totalItems === 3 ? 'grid-cols-3' : totalItems === 4 ? 'grid-cols-4' : 'grid-cols-5';
+
   return (
-    <BottomNavigation>
+    <BottomNavigation gridCols={gridCols}>
       <BottomNavigationItem
         icon="🏠"
         label="Home"
@@ -26,18 +32,18 @@ export function AppNavigation() {
         onClick={() => handleNavigation('/brides')}
         active={currentPath === '/brides'}
       />
-      <BottomNavigationItem
-        icon="👗"
-        label="Wedding"
-        onClick={() => handleNavigation('/wedding')}
-        active={currentPath === '/wedding'}
-      />
-      <BottomNavigationItem
-        icon="🕊️"
-        label="Nikah"
-        onClick={() => handleNavigation('/nikah')}
-        active={currentPath === '/nikah'}
-      />
+      
+      {/* Render favorite folders */}
+      {!isLoading && favorites.map((favorite) => (
+        <BottomNavigationItem
+          key={favorite.id}
+          icon={favorite.icon}
+          label={favorite.name}
+          onClick={() => handleNavigation(`/folder/${favorite.id}`)}
+          active={currentPath === `/folder/${favorite.id}`}
+        />
+      ))}
+      
       <BottomNavigationItem
         icon="📷"
         label="Upload"
@@ -46,4 +52,4 @@ export function AppNavigation() {
       />
     </BottomNavigation>
   );
-} 
+}

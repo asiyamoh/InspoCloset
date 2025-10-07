@@ -40,12 +40,7 @@ export function FolderDetailContent({ folder }: FolderDetailContentProps) {
             </div>
           </div>
           <div className="mt-2">
-            <FavoriteToggle 
-              folderId={folder.id}
-              onToggle={(isFavorite) => {
-                console.log(`Folder ${folder.name} is now ${isFavorite ? 'favorited' : 'unfavorited'}`);
-              }}
-            />
+            <FavoriteToggle folderId={folder.id} />
           </div>
         </div>
       </div>
