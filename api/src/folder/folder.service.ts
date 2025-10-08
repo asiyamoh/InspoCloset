@@ -35,7 +35,8 @@ export class FolderService {
   async createFolder(
     createFolderDto: CreateFolderDto,
     files: Express.Multer.File[],
-    subcategoriesData: SubcategoryData[]
+    subcategoriesData: SubcategoryData[],
+    profileId: string = "bf24ad7d-89c9-46c4-a59d-8fa054eb35ad"
   ): Promise<FolderResponseDto> {
     const { name, brideId, iconPicture, hasSubcategories } = createFolderDto;
 
@@ -68,6 +69,7 @@ export class FolderService {
             data: {
               name,
               brideId: brideId || null,
+              profileId,
               iconPicture: folderIconUrl,
             },
           });
@@ -158,6 +160,15 @@ export class FolderService {
 
   async getAllFolders(): Promise<FolderResponseDto[]> {
     return await this.prisma.folder.findMany({
+      include: {
+        categories: true,
+      },
+    });
+  }
+
+  async getFoldersByProfile(profileId: string): Promise<FolderResponseDto[]> {
+    return await this.prisma.folder.findMany({
+      where: { profileId },
       include: {
         categories: true,
       },

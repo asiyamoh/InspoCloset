@@ -15,4 +15,8 @@ export class CreateFolderDto {
   @IsOptional()
   @IsBoolean()
   hasSubcategories?: boolean;
+
+  @IsOptional()
+  @IsString()
+  profileId?: string;
 }

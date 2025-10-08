@@ -26,6 +26,7 @@ export class FolderController {
         brideId: formData.brideId || undefined,
         iconPicture: formData.folderIcon ? 'uploaded' : undefined,
         hasSubcategories: formData.hasSubcategories === 'true',
+        profileId: formData.profileId || undefined,
       };
 
       // Parse subcategories data
@@ -89,7 +90,7 @@ export class FolderController {
         }
       }
 
-      return await this.folderService.createFolder(createFolderDto, files, subcategoriesData);
+      return await this.folderService.createFolder(createFolderDto, files, subcategoriesData, createFolderDto.profileId);
     } catch (error) {
       console.error('Error creating folder:', error);
       throw new HttpException(
@@ -106,6 +107,18 @@ export class FolderController {
     } catch (error) {
       throw new HttpException(
         'Failed to fetch folders',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('user/:profileId')
+  async getFoldersByProfile(@Param('profileId') profileId: string): Promise<FolderResponseDto[]> {
+    try {
+      return await this.folderService.getFoldersByProfile(profileId);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to fetch user folders',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

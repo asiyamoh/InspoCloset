@@ -27,6 +27,7 @@ model Profile {
   
   // Relations
   brides           Bride[]
+  folders         Folder[]
   favoriteFolders UserFavoriteFolder[]
   
   @@map("profiles")
@@ -59,6 +60,8 @@ model Folder {
   // Relations
   brideId     String?  @map("bride_id") @db.Uuid
   bride       Bride?   @relation(fields: [brideId], references: [id], onDelete: Cascade)
+  profileId   String   @map("profile_id") @db.Uuid
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   categories  Category[]
   pictureLocations PictureLocation[]
   favoriteByProfiles UserFavoriteFolder[]

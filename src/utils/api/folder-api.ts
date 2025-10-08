@@ -5,6 +5,7 @@ export interface CreateFolderRequest {
   brideId?: string;
   iconPicture?: string;
   hasSubcategories?: boolean;
+  profileId?: string;
   subcategories?: {
     name: string;
     picture?: string;
@@ -16,6 +17,7 @@ export interface FolderResponse {
   id: string;
   name: string;
   brideId?: string;
+  profileId?: string;
   iconPicture?: string;
   createdAt: string;
   updatedAt: string;
@@ -102,6 +104,9 @@ export const folderApi = {
 
   getAllFolders: (): Promise<FolderResponse[]> =>
     get<FolderResponse[]>('folders'),
+
+  getUserFolders: (profileId: string): Promise<FolderResponse[]> =>
+    get<FolderResponse[]>(`folders/user/${profileId}`),
 
   getFoldersByBride: (brideId: string): Promise<FolderResponse[]> =>
     get<FolderResponse[]>(`folders/bride/${brideId}`),
