@@ -144,12 +144,25 @@ export class FolderController {
   }
 
   @Put(':id')
+  @UseInterceptors(AnyFilesInterceptor())
   async updateFolder(
     @Param('id') id: string,
-    @Body() updateData: Partial<CreateFolderDto>
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: any
   ): Promise<FolderResponseDto> {
     try {
-      return await this.folderService.updateFolder(id, updateData);
+      // Parse FormData
+      const formData = req.body;
+      
+      // Extract folder metadata
+      const updateData: Partial<CreateFolderDto> = {
+        name: formData.name,
+      };
+
+      // Find icon file if provided
+      const iconFile = files?.find(f => f.fieldname === 'icon');
+
+      return await this.folderService.updateFolder(id, updateData, iconFile);
     } catch (error) {
       throw new HttpException(
         'Failed to update folder',

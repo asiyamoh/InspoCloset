@@ -190,16 +190,73 @@ export class FolderService {
     return folder;
   }
 
-  async updateFolder(id: string, updateData: Partial<CreateFolderDto>): Promise<FolderResponseDto> {
-    const updatedFolder = await this.prisma.folder.update({
-      where: { id },
-      data: updateData,
-      include: {
-        categories: true,
-      },
-    });
+  async updateFolder(id: string, updateData: Partial<CreateFolderDto>, iconFile?: Express.Multer.File): Promise<FolderResponseDto> {
+    // Track uploaded files for cleanup
+    const uploadedFiles: string[] = [];
 
-    return updatedFolder;
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        try {
+          // Get current folder to check for existing icon
+          const currentFolder = await tx.folder.findUnique({
+            where: { id },
+          });
+
+          if (!currentFolder) {
+            throw new Error('Folder not found');
+          }
+
+          // Process new icon if provided
+          let newIconUrl: string | undefined;
+          if (iconFile) {
+            const processedIcon = await this.pictureService.processAndSaveIcon(
+              {
+                buffer: iconFile.buffer,
+                originalName: iconFile.originalname,
+                mimeType: iconFile.mimetype,
+              },
+              'folder'
+            );
+            newIconUrl = processedIcon.url;
+            uploadedFiles.push(processedIcon.url);
+          }
+
+          // Update folder
+          const updatedFolder = await tx.folder.update({
+            where: { id },
+            data: {
+              name: updateData.name || currentFolder.name,
+              iconPicture: newIconUrl || currentFolder.iconPicture,
+            },
+            include: {
+              categories: true,
+            },
+          });
+
+          // Clean up old icon if new one was uploaded
+          if (iconFile && currentFolder.iconPicture) {
+            try {
+              const oldFilePath = currentFolder.iconPicture.split('/').pop();
+              if (oldFilePath) {
+                await this.supabase.storage.from('pictures').remove([oldFilePath]);
+              }
+            } catch (error) {
+              console.warn(`Failed to cleanup old icon ${currentFolder.iconPicture}:`, error);
+            }
+          }
+
+          return updatedFolder;
+        } catch (error) {
+          // Clean up uploaded files on failure
+          await this.cleanupUploadedFiles(uploadedFiles);
+          throw error;
+        }
+      });
+    } catch (error) {
+      // Clean up any remaining uploaded files
+      await this.cleanupUploadedFiles(uploadedFiles);
+      throw new Error(`Failed to update folder: ${error.message}`);
+    }
   }
 
   async deleteFolder(id: string): Promise<void> {

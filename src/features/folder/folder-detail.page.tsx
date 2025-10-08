@@ -6,7 +6,7 @@ import { FolderDetailContent } from "./components/FolderDetailContent";
 
 export function FolderDetailPage() {
   const { folderId } = useParams({ from: "/folder/$folderId" });
-  const { folder, loading, error } = useFolderDetail(folderId);
+  const { folder, loading, error, refreshFolder } = useFolderDetail(folderId);
 
   if (loading) {
     return (
@@ -43,7 +43,11 @@ export function FolderDetailPage() {
 
   return (
     <MainLayout>
-      <FolderDetailContent folder={folder} />
+      <FolderDetailContent 
+        folder={folder} 
+        onFolderUpdated={refreshFolder}
+        onFolderDeleted={refreshFolder}
+      />
     </MainLayout>
   );
 }
