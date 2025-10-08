@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, UseInterceptors, UploadedFiles, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Post, Delete, UseInterceptors, UploadedFiles, Req, HttpException, HttpStatus } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { PictureService } from './picture.service';
 
@@ -63,6 +63,18 @@ export class PictureController {
       console.error('Error uploading pictures to subcategory:', error);
       throw new HttpException(
         'Failed to upload pictures',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Delete(':id')
+  async deletePicture(@Param('id') id: string): Promise<void> {
+    try {
+      await this.pictureService.deletePicture(id);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to delete picture',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

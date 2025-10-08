@@ -131,4 +131,10 @@ export const folderApi = {
 
   getFavorites: (): Promise<FavoriteFolderResponse[]> =>
     get<FavoriteFolderResponse[]>('user-favorite-folders/favorites'),
+
+  deletePicture: (pictureId: string): Promise<{ message: string }> =>
+    del<{ message: string }>(`pictures/${pictureId}`),
+
+  deleteSubcategory: (subcategoryId: string): Promise<{ message: string }> =>
+    del<{ message: string }>(`folders/subcategory/${subcategoryId}`),
 };

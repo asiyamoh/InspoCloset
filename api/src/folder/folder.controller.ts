@@ -210,4 +210,16 @@ export class FolderController {
       );
     }
   }
+
+  @Delete('subcategory/:subcategoryId')
+  async deleteSubcategory(@Param('subcategoryId') subcategoryId: string): Promise<void> {
+    try {
+      await this.folderService.deleteSubcategory(subcategoryId);
+    } catch (error) {
+      throw new HttpException(
+        'Failed to delete subcategory',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

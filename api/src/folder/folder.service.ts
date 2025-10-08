@@ -342,6 +342,61 @@ export class FolderService {
     }
   }
 
+  async deleteSubcategory(subcategoryId: string): Promise<void> {
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        // Get subcategory with pictures to clean up files
+        const subcategory = await tx.category.findUnique({
+          where: { id: subcategoryId },
+          include: {
+            pictureLocations: {
+              include: {
+                picture: {
+                  include: {
+                    pictureTags: {
+                      include: {
+                        tag: true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+          },
+        });
+
+        if (!subcategory) {
+          throw new Error('Subcategory not found');
+        }
+
+        // Collect file URLs for cleanup
+        const fileUrls: string[] = [];
+        
+        // Add subcategory icon if it exists
+        if (subcategory.iconPicture) {
+          fileUrls.push(subcategory.iconPicture);
+        }
+
+        // Add picture URLs
+        subcategory.pictureLocations.forEach(pictureLocation => {
+          if (pictureLocation.picture.url) fileUrls.push(pictureLocation.picture.url);
+          if (pictureLocation.picture.thumbnailUrl) fileUrls.push(pictureLocation.picture.thumbnailUrl);
+        });
+
+        // Delete the subcategory (this will cascade delete pictures and picture tags)
+        await tx.category.delete({
+          where: { id: subcategoryId },
+        });
+
+        // Clean up files from storage
+        await this.cleanupUploadedFiles(fileUrls);
+      });
+    } catch (error) {
+      console.error('Error deleting subcategory:', error);
+      throw new Error(`Failed to delete subcategory: ${error.message}`);
+    }
+  }
+
   // Add cleanup method
   private async cleanupUploadedFiles(fileUrls: string[]): Promise<void> {
     for (const url of fileUrls) {

@@ -71,7 +71,7 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
             {/* Management Actions */}
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 text-sageGreen hover:bg-sageGreen/10 rounded-lg transition-colors"
+              className="flex items-center gap-2 pl-10 py-2 text-sageGreen hover:bg-sageGreen/10 rounded-lg transition-colors"
               title="Edit folder"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
             
             <button
               onClick={() => setIsDeleting(true)}
-              className="flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center gap-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
               title="Delete folder"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
