@@ -15,13 +15,13 @@ export function AppHeader() {
 
   // Check if we're on a bride detail page
   const brideDetailMatch = pathname.match(/^\/bride-detail\/(.+)$/);
-  const brideId = brideDetailMatch ? brideDetailMatch[1] : null;
-  const bride = brideId ? useBrideDetail(brideId) : null;
+  const brideId = brideDetailMatch ? brideDetailMatch[1] : "";
+  const { bride } = useBrideDetail(brideId);
 
   const title =
     bride
       ? bride.name
-      : pathname === "/home"
+      : pathname === "/bride"
       ? "InspoCloset"
       : pathname === "/brides"
       ? "Brides"

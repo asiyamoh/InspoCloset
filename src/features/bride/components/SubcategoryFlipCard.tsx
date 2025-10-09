@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrideSubcategory } from "../data/mockBrideDetails";
+import { BrideSubcategory } from "../types";
 
 interface SubcategoryFlipCardProps {
   subcategory: BrideSubcategory;

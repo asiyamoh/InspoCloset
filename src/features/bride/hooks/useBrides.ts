@@ -1,30 +1,32 @@
-import { useEffect, useState } from "react";
+import { useState, useCallback } from "react";
 import type { Bride } from "../types";
-import { mockBrides } from "../data/mockBrides";
+import { API_URL } from "../../../utils/constants";
 
 export function useBrides() {
   const [brides, setBrides] = useState<Bride[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    let isMounted = true;
+  const fetchBrides = useCallback(async () => {
     try {
-      // Simulate async fetch for now
-      const timer = setTimeout(() => {
-        if (!isMounted) return;
-        setBrides(mockBrides);
-        setIsLoading(false);
-      }, 100);
-      return () => {
-        isMounted = false;
-        clearTimeout(timer);
-      };
+      setIsLoading(true);
+      setError(undefined);
+      
+      const response = await fetch(`${API_URL}/brides`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch brides');
+      }
+      
+      const data = await response.json();
+      setBrides(data);
     } catch (e) {
-      setError("Failed to load brides");
+      setError(e instanceof Error ? e.message : "Failed to load brides");
+    } finally {
       setIsLoading(false);
     }
   }, []);
 
-  return { brides, isLoading, error } as const;
+  return { brides, isLoading, error, fetchBrides } as const;
 } 

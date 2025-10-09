@@ -19,15 +19,15 @@ export function BrideCard({ bride }: BrideCardProps) {
     >
       <div className="relative">
         <img
-          src={bride.coverImageUrl}
-          alt={bride.fullName}
+          src={bride.profilePicture || "/assets/owl-face.png"}
+          alt={bride.name}
           className="w-full aspect-square object-cover"
         />
         <div className="absolute inset-x-0 top-0 h-1.5 bg-dustyRose" />
       </div>
       <div className="p-3">
         <div className="bg-white rounded-md border border-dustyRose/20 shadow-sm px-3 py-2 text-center">
-          <span className="text-slate-800 font-medium">{bride.fullName}</span>
+          <span className="text-slate-800 font-medium">{bride.name}</span>
         </div>
       </div>
     </div>

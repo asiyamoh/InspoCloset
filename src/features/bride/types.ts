@@ -1,9 +1,17 @@
 export type Bride = {
   id: string;
-  fullName: string;
-  coverImageUrl: string;
-  createdAt: string | Date;
-  updatedAt?: string | Date;
+  name: string;
+  email: string;
+  profilePicture?: string;
+  createdAt: string;
+  updatedAt?: string;
+  profileId: string;
   photosCount?: number;
   notesCount?: number;
+};
+
+export type BrideSubcategory = {
+  icon: string;
+  label: string;
+  content: string;
 }; 
