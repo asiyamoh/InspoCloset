@@ -83,6 +83,28 @@ export class PictureService {
     };
   }
 
+  async getPictureById(pictureId: string) {
+    return await this.prisma.picture.findUnique({
+      where: { id: pictureId },
+      include: {
+        pictureTags: {
+          include: {
+            tag: true,
+          },
+        },
+        pictureLocations: {
+          include: {
+            category: {
+              include: {
+                folder: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async getPicturesByCategory(categoryId: string) {
     return await this.prisma.picture.findMany({
       where: {
@@ -217,7 +239,7 @@ export class PictureService {
           
           // REUSE existing tag assignment
           if (pictureData.tags && pictureData.tags.length > 0) {
-            await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags);
+            await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags, tx);
           }
           
           uploadedPictures.push(processedPicture);

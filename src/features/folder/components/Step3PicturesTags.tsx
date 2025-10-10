@@ -6,7 +6,6 @@ interface Step3PicturesTagsProps {
   onSubcategoriesChange: (subcategories: Subcategory[]) => void;
   errors: Record<string, string>;
   suggestedTags: string[];
-  onPhotosUploaded?: () => void;
   // New props for single subcategory mode
   singleSubcategoryMode?: boolean;
   onUpload?: (pictures: PictureUpload[]) => void;
@@ -15,7 +14,6 @@ interface Step3PicturesTagsProps {
 export function Step3PicturesTags({
   subcategories,
   onSubcategoriesChange,
-  onPhotosUploaded,
   singleSubcategoryMode = false,
   onUpload
 }: Step3PicturesTagsProps) {
@@ -35,10 +33,6 @@ export function Step3PicturesTags({
       })
     );
     
-    // Trigger photo review step after upload
-    if (onPhotosUploaded) {
-      onPhotosUploaded();
-    }
   };
 
   const handleRemovePicture = (subcategoryId: string, pictureId: string) => {
@@ -53,44 +47,6 @@ export function Step3PicturesTags({
     );
   };
 
-  const handleUpdatePictureTags = (subcategoryId: string, pictureId: string, tags: string[]) => {
-    onSubcategoriesChange(
-      subcategories.map(sub => {
-        if (sub.id === subcategoryId) {
-          const updatedPictures = sub.pictures.map(pic =>
-            pic.id === pictureId ? { ...pic, tags } : pic
-          );
-          return { ...sub, pictures: updatedPictures };
-        }
-        return sub;
-      })
-    );
-  };
-
-  const addTag = (subcategoryId: string, pictureId: string, input: HTMLInputElement) => {
-    const newTag = input.value.trim();
-    if (newTag) {
-      const picture = subcategories
-        .find(sub => sub.id === subcategoryId)
-        ?.pictures.find(pic => pic.id === pictureId);
-      
-      if (picture && !picture.tags.includes(newTag)) {
-        handleUpdatePictureTags(subcategoryId, pictureId, [...picture.tags, newTag]);
-      }
-      input.value = '';
-    }
-  };
-
-  const removeTag = (subcategoryId: string, pictureId: string, tagToRemove: string) => {
-    const picture = subcategories
-      .find(sub => sub.id === subcategoryId)
-      ?.pictures.find(pic => pic.id === pictureId);
-    
-    if (picture) {
-      const updatedTags = picture.tags.filter(tag => tag !== tagToRemove);
-      handleUpdatePictureTags(subcategoryId, pictureId, updatedTags);
-    }
-  };
 
   const handleUpload = () => {
     if (singleSubcategoryMode && subcategories.length > 0) {
@@ -134,7 +90,7 @@ export function Step3PicturesTags({
                   {subcategory.name || `Subcategory ${subIndex + 1}`}
                 </h4>
                 <p className="text-sm text-dustyRose/70 mb-2">
-                  Upload photos and add tags to organize them
+                  Upload photos - you'll review and optionally add tags in the next step
                 </p>
               </div>
 
@@ -145,7 +101,16 @@ export function Step3PicturesTags({
                 />
               </div>
 
-              {/* Picture Previews */}
+              {/* Photo Count */}
+              {subcategory.pictures && subcategory.pictures.length > 0 && (
+                <div className="mb-6 p-4 bg-champagneBeige/30 rounded-lg border border-dustyRose/20">
+                  <div className="text-sm text-sageGreen">
+                    <span className="font-medium">{subcategory.pictures.length}</span> photo{subcategory.pictures.length !== 1 ? 's' : ''} selected
+                  </div>
+                </div>
+              )}
+
+              {/* Picture Previews - Simplified */}
               {subcategory.pictures && subcategory.pictures.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {subcategory.pictures.map((picture) => (
@@ -169,58 +134,11 @@ export function Step3PicturesTags({
                         </div>
                       </div>
 
-                      {/* Content */}
-                      <div className="p-4">
-                        <p className="text-xs text-dustyRose/70 truncate mb-3" title={picture.file.name}>
+                      {/* Content - Simplified */}
+                      <div className="p-3">
+                        <p className="text-xs text-dustyRose/70 truncate" title={picture.file.name}>
                           {picture.file.name}
                         </p>
-                        
-                        {/* Tag Section - More Prominent */}
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-1 mb-2">
-                            <svg className="w-3 h-3 text-skyBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                            </svg>
-                            <span className="text-xs font-medium text-skyBlue">Tags for search:</span>
-                          </div>
-                          
-                          {/* Tag Input - Larger */}
-                          <input
-                            type="text"
-                            placeholder="Add tag (press Enter)..."
-                            className="w-full px-3 py-2 text-sm border border-dustyRose/30 rounded-lg focus:ring-2 focus:ring-skyBlue focus:border-skyBlue transition-colors placeholder:text-dustyRose/60 bg-ivoryCream"
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
-                                addTag(subcategory.id!, picture.id, e.target as HTMLInputElement);
-                              }
-                            }}
-                          />
-                        </div>
-
-                        {/* Tags Display - More Prominent */}
-                        {picture.tags.length > 0 && (
-                          <div className="mt-3">
-                            <div className="flex flex-wrap gap-1">
-                              {picture.tags.map((tag, index) => (
-                                <span
-                                  key={index}
-                                  className="inline-flex items-center gap-1 px-2 py-1 bg-skyBlue/15 text-skyBlue text-xs rounded-full border border-skyBlue/30"
-                                >
-                                  #{tag}
-                                  <button
-                                    type="button"
-                                    onClick={() => removeTag(subcategory.id!, picture.id, tag)}
-                                    className="hover:text-skyBlue/70 transition-colors"
-                                  >
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                  </button>
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
                   ))}

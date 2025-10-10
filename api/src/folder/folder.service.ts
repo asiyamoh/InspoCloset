@@ -125,7 +125,7 @@ export class FolderService {
 
                   // Assign tags if provided
                   if (pictureData.tags && pictureData.tags.length > 0) {
-                    await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags);
+                    await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags, tx);
                   }
                 }
               }

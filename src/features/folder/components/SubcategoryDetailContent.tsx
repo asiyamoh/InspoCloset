@@ -3,7 +3,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AddPicturesToSubcategoryModal } from "./AddPicturesToSubcategoryModal";
 import { EditSubcategoryModal } from "./EditSubcategoryModal";
-import { DeletePictureConfirmationModal } from "./DeletePictureConfirmationModal";
 import { DeleteSubcategoryConfirmationModal } from "./DeleteSubcategoryConfirmationModal";
 
 interface SubcategoryDetailContentProps {
@@ -24,9 +23,7 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
   const navigate = useNavigate();
   const [isAddPicturesModalOpen, setIsAddPicturesModalOpen] = useState(false);
   const [isEditSubcategoryModalOpen, setIsEditSubcategoryModalOpen] = useState(false);
-  const [isDeletePictureModalOpen, setIsDeletePictureModalOpen] = useState(false);
   const [isDeleteSubcategoryModalOpen, setIsDeleteSubcategoryModalOpen] = useState(false);
-  const [selectedPicture, setSelectedPicture] = useState<PictureResponse | null>(null);
 
   const handleBackToFolder = () => {
     navigate({ to: `/folder/${folder.id}` });
@@ -57,18 +54,9 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
     window.location.reload();
   };
 
-  const handleDeletePictureClick = (picture: PictureResponse) => {
-    setSelectedPicture(picture);
-    setIsDeletePictureModalOpen(true);
-  };
 
-  const handleCloseDeletePictureModal = () => {
-    setIsDeletePictureModalOpen(false);
-    setSelectedPicture(null);
-  };
-
-  const handlePictureDeleted = () => {
-    onPicturesRefresh?.();
+  const handlePictureClick = (picture: PictureResponse) => {
+    navigate({ to: '/picture-detail/$pictureId', params: { pictureId: picture.id } });
   };
 
   const handleDeleteSubcategoryClick = () => {
@@ -166,22 +154,24 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
         {pictures.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {pictures.map((picture) => (
-              <div key={picture.id} className="bg-white/60 rounded-lg border border-dustyRose/20 shadow-photo-glue overflow-hidden relative">
-                <img
-                  src={picture.thumbnailUrl || picture.url}
-                  alt={`Picture in ${subcategory.name}`}
-                  className="w-full h-32 object-cover"
-                />
-                {/* Delete Button */}
-                <button
-                  onClick={() => handleDeletePictureClick(picture)}
-                  className="absolute bottom-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 transition-colors shadow-lg"
-                  title="Delete picture"
+              <div key={picture.id} className="bg-white/60 rounded-lg border border-dustyRose/20 shadow-photo-glue overflow-hidden relative group cursor-pointer">
+                {/* Clickable Image */}
+                <div 
+                  onClick={() => handlePictureClick(picture)}
+                  className="relative"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+                  <img
+                    src={picture.thumbnailUrl || picture.url}
+                    alt={`Picture in ${subcategory.name}`}
+                    className="w-full h-32 object-cover transition-transform group-hover:scale-105"
+                  />
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                    <div className="text-white text-sm font-medium">
+                      Click to edit tags
+                    </div>
+                  </div>
+                </div>
                 <div className="p-3">
                   <div className="text-sm text-dustyRose/70 mb-2">
                     {picture.pictureTags.length > 0 && (
@@ -239,14 +229,6 @@ export function SubcategoryDetailContent({ folder, subcategory, pictures, onPict
         onClose={handleCloseEditModal}
         onSuccess={handleSubcategoryUpdated}
         subcategory={subcategory}
-      />
-
-      {/* Delete Picture Modal */}
-      <DeletePictureConfirmationModal
-        isOpen={isDeletePictureModalOpen}
-        onClose={handleCloseDeletePictureModal}
-        onSuccess={handlePictureDeleted}
-        picture={selectedPicture}
       />
 
       {/* Delete Subcategory Modal */}

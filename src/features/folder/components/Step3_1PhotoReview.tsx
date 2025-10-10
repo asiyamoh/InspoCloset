@@ -120,10 +120,10 @@ export function Step3_1PhotoReview({
       {/* Header */}
       <div className="text-center">
         <h3 className="text-xl font-semibold text-sageGreen mb-2">
-          Review & Tag Your Photos
+          Review Your Photos
         </h3>
         <p className="text-sm text-dustyRose/70">
-          Add tags to help you find these photos later
+          Review your photos and optionally add tags to help you find them later
         </p>
       </div>
 
@@ -164,7 +164,7 @@ export function Step3_1PhotoReview({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-sageGreen mb-2">
-                Add tags for this photo
+                Add tags for this photo (optional)
               </label>
               <input
                 type="text"
@@ -175,7 +175,7 @@ export function Step3_1PhotoReview({
                 className="w-full px-4 py-3 text-base border border-dustyRose/30 rounded-lg focus:ring-2 focus:ring-skyBlue focus:border-skyBlue transition-colors placeholder:text-dustyRose/60 bg-ivoryCream"
               />
               <p className="text-xs text-dustyRose/60 mt-2">
-                Press Enter or comma to add tags
+                Press Enter or comma to add tags (tags are optional)
               </p>
             </div>
 
@@ -226,7 +226,7 @@ export function Step3_1PhotoReview({
             onClick={handleSkip}
             className="px-6 py-3 text-sm font-medium text-dustyRose bg-champagneBeige/50 border border-dustyRose/30 rounded-lg hover:bg-champagneBeige/70 transition-colors"
           >
-            Skip Tagging
+            Skip All Tagging
           </button>
 
           <button

@@ -5,9 +5,12 @@ import { PrismaService } from '../database/prisma/prisma.service';
 export class TagService {
   constructor(private prisma: PrismaService) {}
 
-  async createTag(name: string): Promise<{ id: string; name: string }> {
+  async createTag(name: string, tx?: any): Promise<{ id: string; name: string }> {
+    // Use transaction context if provided, otherwise use regular prisma client
+    const prismaClient = tx || this.prisma;
+
     // Check if tag already exists
-    const existingTag = await this.prisma.tag.findFirst({
+    const existingTag = await prismaClient.tag.findFirst({
       where: { name: name.toLowerCase().trim() },
     });
 
@@ -16,7 +19,7 @@ export class TagService {
     }
 
     // Create new tag
-    return await this.prisma.tag.create({
+    return await prismaClient.tag.create({
       data: {
         name: name.toLowerCase().trim(),
       },
@@ -43,16 +46,19 @@ export class TagService {
     }));
   }
 
-  async assignTagsToPicture(pictureId: string, tagNames: string[]): Promise<void> {
+  async assignTagsToPicture(pictureId: string, tagNames: string[], tx?: any): Promise<void> {
     if (tagNames.length === 0) return;
+
+    // Use transaction context if provided, otherwise use regular prisma client
+    const prismaClient = tx || this.prisma;
 
     // Create tags if they don't exist
     const tags = await Promise.all(
-      tagNames.map(name => this.createTag(name))
+      tagNames.map(name => this.createTag(name, tx))
     );
 
     // Create picture-tag relationships
-    await this.prisma.pictureTag.createMany({
+    await prismaClient.pictureTag.createMany({
       data: tags.map(tag => ({
         pictureId,
         tagId: tag.id,
@@ -80,5 +86,17 @@ export class TagService {
         tagId,
       },
     });
+  }
+
+  async updatePictureTags(pictureId: string, tagNames: string[]): Promise<void> {
+    // Remove all existing tags for this picture
+    await this.prisma.pictureTag.deleteMany({
+      where: { pictureId }
+    });
+    
+    // Add new tags if any provided
+    if (tagNames.length > 0) {
+      await this.assignTagsToPicture(pictureId, tagNames);
+    }
   }
 }

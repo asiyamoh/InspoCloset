@@ -18,12 +18,12 @@ interface AddFolderModalProps {
 const STEPS = [
   'Folder Info',
   'Subcategories', 
-  'Photos & Tags'
+  'Photos',
+  'Review & Tags'
 ];
 
 export function AddFolderModal({ isOpen, onClose, onSuccess, brideId }: AddFolderModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isInPhotoReview, setIsInPhotoReview] = useState(false);
   const [formData, setFormData] = useState<FolderFormData>({
     name: '',
     icon: null,
@@ -79,31 +79,15 @@ export function AddFolderModal({ isOpen, onClose, onSuccess, brideId }: AddFolde
       case 2:
         return !formData.hasSubcategories || formData.subcategories.every(sub => sub.name.trim().length > 0);
       case 3:
-        return true; // Step 3 is optional
+        return true; // Photos step is always valid
+      case 4:
+        return true; // Review step is always valid
       default:
         return false;
     }
   };
 
   const renderCurrentStep = () => {
-    // Show photo review step if we're in it
-    if (isInPhotoReview) {
-      return (
-        <Step3_1PhotoReview
-          subcategories={formData.subcategories}
-          onSubcategoriesChange={(subcategories) => setFormData(prev => ({ ...prev, subcategories }))}
-          onComplete={() => {
-            setIsInPhotoReview(false);
-            handleSubmit();
-          }}
-          onSkip={() => {
-            setIsInPhotoReview(false);
-            handleSubmit();
-          }}
-        />
-      );
-    }
-
     switch (currentStep) {
       case 1:
         return (
@@ -130,7 +114,15 @@ export function AddFolderModal({ isOpen, onClose, onSuccess, brideId }: AddFolde
             onSubcategoriesChange={(subcategories) => setFormData(prev => ({ ...prev, subcategories }))}
             errors={errors}
             suggestedTags={[]}
-            onPhotosUploaded={() => setIsInPhotoReview(true)}
+          />
+        );
+      case 4:
+        return (
+          <Step3_1PhotoReview
+            subcategories={formData.subcategories}
+            onSubcategoriesChange={(subcategories) => setFormData(prev => ({ ...prev, subcategories }))}
+            onComplete={() => handleSubmit()}
+            onSkip={() => handleSubmit()}
           />
         );
       default:
@@ -144,7 +136,7 @@ export function AddFolderModal({ isOpen, onClose, onSuccess, brideId }: AddFolde
         {/* Header */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-sageGreen mb-4 text-center">Create New Folder</h2>
-          {!isInPhotoReview && <StepCounter currentStep={currentStep} totalSteps={STEPS.length} stepNames={STEPS} />}
+          <StepCounter currentStep={currentStep} totalSteps={STEPS.length} stepNames={STEPS} />
         </div>
 
         {/* Step Content */}
@@ -153,49 +145,47 @@ export function AddFolderModal({ isOpen, onClose, onSuccess, brideId }: AddFolde
         </div>
 
         {/* Navigation */}
-        {!isInPhotoReview && (
-          <div className="pt-6 pb-20">
-            <div className="border-t border-dustyRose/30 mb-6"></div>
-            <div className="flex justify-between items-center gap-4">
+        <div className="pt-6 pb-20">
+          <div className="border-t border-dustyRose/30 mb-6"></div>
+          <div className="flex justify-between items-center gap-4">
+            <button
+              type="button"
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+              className="flex-1 px-4 py-3 text-xs font-medium text-dustyRose bg-champagneBeige/50 border border-dustyRose/30 rounded-lg hover:bg-champagneBeige/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
+            >
+              Previous
+            </button>
+
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex-1 px-4 py-3 text-xs font-medium text-dustyRose bg-champagneBeige/50 border border-dustyRose/30 rounded-lg hover:bg-champagneBeige/70 transition-colors min-h-[44px] flex items-center justify-center"
+            >
+              Cancel
+            </button>
+
+            {currentStep < STEPS.length ? (
               <button
                 type="button"
-                onClick={handlePrevious}
-                disabled={currentStep === 1}
-                className="flex-1 px-4 py-3 text-xs font-medium text-dustyRose bg-champagneBeige/50 border border-dustyRose/30 rounded-lg hover:bg-champagneBeige/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
+                onClick={handleNext}
+                disabled={!isStepValid()}
+                className="flex-1 px-4 py-3 text-xs font-medium text-white bg-skyBlue border border-transparent rounded-lg hover:bg-skyBlue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
               >
-                Previous
+                Next
               </button>
-
+            ) : (
               <button
                 type="button"
-                onClick={handleClose}
-                className="flex-1 px-4 py-3 text-xs font-medium text-dustyRose bg-champagneBeige/50 border border-dustyRose/30 rounded-lg hover:bg-champagneBeige/70 transition-colors min-h-[44px] flex items-center justify-center"
+                onClick={handleSubmit}
+                disabled={isSubmitting || !isStepValid()}
+                className="flex-1 px-4 py-3 text-xs font-medium text-white bg-sageGreen border border-transparent rounded-lg hover:bg-sageGreen/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
               >
-                Cancel
+                {isSubmitting ? 'Creating...' : 'Create Folder'}
               </button>
-
-              {currentStep < STEPS.length ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  disabled={!isStepValid()}
-                  className="flex-1 px-4 py-3 text-xs font-medium text-white bg-skyBlue border border-transparent rounded-lg hover:bg-skyBlue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting || !isStepValid()}
-                  className="flex-1 px-4 py-3 text-xs font-medium text-white bg-sageGreen border border-transparent rounded-lg hover:bg-sageGreen/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center"
-                >
-                  {isSubmitting ? 'Creating...' : 'Create Folder'}
-                </button>
-              )}
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </Modal>
   );
