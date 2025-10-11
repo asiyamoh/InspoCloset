@@ -40,24 +40,24 @@ export function FavoriteToggle({ folderId, onToggle }: FavoriteToggleProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center space-x-2">
-        <div className="w-4 h-4 border-2 border-dustyRose/30 border-t-dustyRose rounded-full animate-spin" />
-        <span className="text-sm text-dustyRose/70">Loading...</span>
+      <div className="flex items-center space-x-1">
+        <div className="w-3 h-3 border-2 border-dustyRose/30 border-t-dustyRose rounded-full animate-spin" />
+        <span className="text-xs text-dustyRose/70">Loading...</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      <label className="flex items-center space-x-2 cursor-pointer">
+    <div className="flex items-center space-x-1">
+      <label className="flex items-center space-x-1 cursor-pointer">
         <input
           type="checkbox"
           checked={isFavorite}
           onChange={handleToggle}
           disabled={isToggling}
-          className="w-4 h-4 text-sageGreen bg-white border-dustyRose/30 rounded focus:ring-sageGreen focus:ring-2"
+          className="w-3 h-3 text-sageGreen bg-white border-dustyRose/30 rounded focus:ring-sageGreen focus:ring-1"
         />
-        <span className="text-sm font-medium text-sageGreen">
+        <span className="text-xs font-medium text-sageGreen">
           {isFavorite ? '⭐ Favorite' : '☆ Add to Favorites'}
         </span>
         <InfoTooltip 
@@ -70,11 +70,11 @@ export function FavoriteToggle({ folderId, onToggle }: FavoriteToggleProps) {
       </label>
       
       {isToggling && (
-        <div className="w-4 h-4 border-2 border-dustyRose/30 border-t-dustyRose rounded-full animate-spin" />
+        <div className="w-3 h-3 border-2 border-dustyRose/30 border-t-dustyRose rounded-full animate-spin" />
       )}
       
       {error && (
-        <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
+        <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-2 py-1">
           {error}
         </div>
       )}

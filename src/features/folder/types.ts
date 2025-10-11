@@ -7,6 +7,20 @@ export interface PictureUpload {
   uploadError?: string;
 }
 
+export interface Category {
+  id?: string;
+  name: string;
+  icon: string | File | null;
+  pictures: PictureUpload[];
+  folderId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CategoryFormData {
+  categories: Category[];
+}
+
 export interface Subcategory {
   id?: string;
   name: string;

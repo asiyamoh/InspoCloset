@@ -7,6 +7,7 @@ import { PictureService, PictureUploadData } from '../picture/picture.service';
 import { TagService } from '../tag/tag.service';
 import { Express } from 'express';
 import { createClient } from '@supabase/supabase-js';
+import { CategoryData } from './dto/create-category.dto';
 
 export interface SubcategoryData {
   name: string;
@@ -394,6 +395,120 @@ export class FolderService {
     } catch (error) {
       console.error('Error deleting subcategory:', error);
       throw new Error(`Failed to delete subcategory: ${error.message}`);
+    }
+  }
+
+  async addCategoriesToFolder(
+    folderId: string,
+    categoriesData: CategoryData[],
+    brideId?: string,
+    profileId: string = "bf24ad7d-89c9-46c4-a59d-8fa054eb35ad"
+  ): Promise<{
+    success: boolean;
+    createdCategories: SubcategoryResponseDto[];
+    errors: Array<{ categoryName: string; error: string }>;
+  }> {
+    const uploadedFiles: string[] = [];
+    const createdCategories: SubcategoryResponseDto[] = [];
+    const errors: Array<{ categoryName: string; error: string }> = [];
+
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        try {
+          // Verify folder exists
+          const folder = await tx.folder.findUnique({
+            where: { id: folderId },
+          });
+
+          if (!folder) {
+            throw new Error('Folder not found');
+          }
+
+          // Process each category
+          for (const categoryData of categoriesData) {
+            try {
+              // Process category icon if provided
+              let categoryIconUrl: string | undefined;
+              if (categoryData.icon) {
+                const processedIcon = await this.pictureService.processAndSaveIcon(
+                  {
+                    buffer: categoryData.icon.buffer,
+                    originalName: categoryData.icon.originalname,
+                    mimeType: categoryData.icon.mimetype,
+                  },
+                  'category'
+                );
+                categoryIconUrl = processedIcon.url;
+                uploadedFiles.push(processedIcon.url);
+              }
+
+              // Create category
+              const category = await tx.category.create({
+                data: {
+                  name: categoryData.name,
+                  iconPicture: categoryIconUrl,
+                  folderId: folderId,
+                },
+              });
+
+              // Process pictures for this category
+              if (categoryData.pictures && categoryData.pictures.length > 0) {
+                for (const pictureData of categoryData.pictures) {
+                  // Process and save picture WITHIN transaction
+                  const processedPicture = await this.pictureService.processAndSavePictureInTransaction(
+                    tx, // Pass the transaction
+                    {
+                      buffer: pictureData.file.buffer,
+                      originalName: pictureData.file.originalname,
+                      mimeType: pictureData.file.mimetype,
+                    },
+                    category.id,
+                    brideId,
+                    folderId
+                  );
+
+                  // Track uploaded files
+                  uploadedFiles.push(processedPicture.url);
+                  uploadedFiles.push(processedPicture.thumbnailUrl);
+
+                  // Assign tags if provided
+                  if (pictureData.tags && pictureData.tags.length > 0) {
+                    await this.tagService.assignTagsToPicture(processedPicture.id, pictureData.tags, tx);
+                  }
+                }
+              }
+
+              createdCategories.push({
+                id: category.id,
+                name: category.name,
+                iconPicture: category.iconPicture,
+                folderId: category.folderId,
+                createdAt: category.createdAt,
+                updatedAt: category.updatedAt,
+              });
+            } catch (error) {
+              errors.push({
+                categoryName: categoryData.name,
+                error: error instanceof Error ? error.message : 'Unknown error'
+              });
+            }
+          }
+
+          return {
+            success: errors.length === 0,
+            createdCategories,
+            errors,
+          };
+        } catch (error) {
+          // Clean up uploaded files on failure
+          await this.cleanupUploadedFiles(uploadedFiles);
+          throw error;
+        }
+      });
+    } catch (error) {
+      // Clean up any remaining uploaded files
+      await this.cleanupUploadedFiles(uploadedFiles);
+      throw new Error(`Failed to add categories to folder: ${error.message}`);
     }
   }
 

@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { FavoriteToggle } from "./FavoriteToggle";
 import { EditFolderModal } from "./EditFolderModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
+import { AddCategoryModal } from "./AddCategoryModal";
 
 interface FolderDetailContentProps {
   folder: FolderResponse;
@@ -15,6 +16,7 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
   const subcategories = folder.subcategories || folder.categories || [];
   const folderId = folder.id;
 
@@ -34,6 +36,11 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
     navigate({ to: '/home' });
   };
 
+  const handleAddCategorySuccess = () => {
+    setIsAddingCategory(false);
+    onFolderUpdated?.();
+  };
+
   const handleBackToHome = () => {
     navigate({ to: '/home' });
   };
@@ -50,27 +57,34 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
           <span>Back to Home</span>
         </button>
         {/* Folder Header */}
-        <div className="bg-white/60 p-6 rounded-lg border border-dustyRose/20 shadow-photo-glue">
-          <div className="flex items-center gap-4">
-            {/* Icon */}
-            <div className="w-16 h-16 flex items-center justify-center flex-shrink-0">
-              {folder.iconPicture ? (
-                <img 
-                  src={folder.iconPicture} 
-                  alt={folder.name}
-                  className="w-full h-full rounded object-cover"
-                />
-              ) : (
-                <span className="text-5xl">📁</span>
-              )}
+        <div className="bg-white/60 p-4 rounded-lg border border-dustyRose/20 shadow-photo-glue max-w-full max-h-full">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              {/* Icon */}
+              <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
+                {folder.iconPicture ? (
+                  <img 
+                    src={folder.iconPicture} 
+                    alt={folder.name}
+                    className="w-full h-full rounded object-cover"
+                  />
+                ) : (
+                  <span className="text-3xl">📁</span>
+                )}
+              </div>
+              
+              {/* Folder Info */}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-bold text-sageGreen mb-0.5 truncate">{folder.name}</h1>
+                <p className="text-dustyRose/70 text-sm">
+                  Created {new Date(folder.createdAt).toLocaleDateString()}
+                </p>
+              </div>
             </div>
             
-            {/* Folder Info */}
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-sageGreen mb-1">{folder.name}</h1>
-              <p className="text-dustyRose/70 text-lg">
-                Created {new Date(folder.createdAt).toLocaleDateString()}
-              </p>
+            {/* Favorites Toggle */}
+            <div className="flex-shrink-0 ml-2">
+              <FavoriteToggle folderId={folder.id} />
             </div>
           </div>
         </div>
@@ -78,12 +92,18 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
         {/* Action Bar */}
         <div className="bg-white/40 px-6 py-3 rounded-lg border border-dustyRose/10 shadow-photo-glue-sm">
           <div className="flex items-center justify-center gap-6">
-            <FavoriteToggle folderId={folder.id} />
+            {/* Add Category Button */}
+            <button
+              onClick={() => setIsAddingCategory(true)}
+              className="bg-sageGreen text-white px-4 py-2 rounded-lg hover:bg-sageGreen/80 transition-colors"
+            >
+              Add Category
+            </button>
             
             {/* Management Actions */}
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 pl-10 py-2 text-sageGreen hover:bg-sageGreen/10 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sageGreen hover:bg-sageGreen/10 rounded-lg transition-colors"
               title="Edit folder"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +114,7 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
             
             <button
               onClick={() => setIsDeleting(true)}
-              className="flex items-center gap-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
               title="Delete folder"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,6 +189,14 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
         onClose={() => setIsDeleting(false)}
         onSuccess={handleDeleteSuccess}
         folder={folder}
+      />
+
+      <AddCategoryModal
+        isOpen={isAddingCategory}
+        onClose={() => setIsAddingCategory(false)}
+        onSuccess={handleAddCategorySuccess}
+        folderId={folder.id}
+        brideId={folder.brideId}
       />
     </>
   );

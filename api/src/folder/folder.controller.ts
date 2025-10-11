@@ -4,6 +4,7 @@ import { FolderService, SubcategoryData } from './folder.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { FolderResponseDto } from './dto/folder-response.dto';
+import { CategoryData } from './dto/create-category.dto';
 import { Express } from 'express';
 
 @Controller('folders')
@@ -95,6 +96,91 @@ export class FolderController {
       console.error('Error creating folder:', error);
       throw new HttpException(
         'Failed to create folder',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Post(':folderId/categories')
+  @UseInterceptors(AnyFilesInterceptor())
+  async addCategoriesToFolder(
+    @Param('folderId') folderId: string,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: any
+  ) {
+    try {
+      // Parse FormData
+      const formData = req.body;
+      
+      // Parse categories data
+      const categoriesData: CategoryData[] = [];
+      
+      // Find all category indices
+      const categoryIndices = new Set<string>();
+      Object.keys(formData).forEach(key => {
+        const match = key.match(/^categories\[(\d+)\]\.name$/);
+        if (match) {
+          categoryIndices.add(match[1]);
+        }
+      });
+
+      // Process each category
+      for (const index of categoryIndices) {
+        const categoryName = formData[`categories[${index}].name`];
+        
+        // Find category icon file
+        const categoryIconFile = files.find(f => f.fieldname === `categories[${index}].icon`);
+        
+        // Find pictures for this category
+        const pictures: { file: Express.Multer.File; tags: string[] }[] = [];
+        const pictureIndices = new Set<string>();
+        
+        Object.keys(formData).forEach(key => {
+          const match = key.match(new RegExp(`^categories\\[${index}\\]\\.pictures\\[(\\d+)\\]\\.tags$`));
+          if (match) {
+            pictureIndices.add(match[1]);
+          }
+        });
+
+        // Process each picture for this category
+        for (const pictureIndex of pictureIndices) {
+          const pictureFile = files.find(f => f.fieldname === `categories[${index}].pictures[${pictureIndex}].file`);
+          const tagsString = formData[`categories[${index}].pictures[${pictureIndex}].tags`];
+          
+          if (pictureFile) {
+            let tags: string[] = [];
+            if (tagsString) {
+              try {
+                tags = JSON.parse(tagsString);
+              } catch (error) {
+                console.warn(`Failed to parse tags for category ${index}, picture ${pictureIndex}:`, error);
+              }
+            }
+            
+            pictures.push({
+              file: pictureFile,
+              tags,
+            });
+          }
+        }
+
+        categoriesData.push({
+          name: categoryName,
+          icon: categoryIconFile,
+          pictures,
+        });
+      }
+
+      return await this.folderService.addCategoriesToFolder(
+        folderId,
+        categoriesData,
+        formData.brideId,
+        formData.profileId
+      );
+    } catch (error) {
+      console.error('Error adding categories to folder:', error);
+      throw new HttpException(
+        'Failed to add categories to folder',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
