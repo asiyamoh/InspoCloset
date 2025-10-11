@@ -13,10 +13,13 @@ export function AppHeader() {
 
   const pathname = routerState.location.pathname;
 
-  // Check if we're on a bride detail page
+  // Check if we're on a bride detail page (only if bride feature is enabled)
   const brideDetailMatch = pathname.match(/^\/bride-detail\/(.+)$/);
   const brideId = brideDetailMatch ? brideDetailMatch[1] : "";
-  const { bride } = useBrideDetail(brideId);
+  
+  // Only use bride hook if we're on a bride detail page and feature is enabled
+  const shouldUseBrideHook = brideDetailMatch && (window.location.origin.includes('localhost') || window.location.origin.includes('develop'));
+  const { bride } = useBrideDetail(shouldUseBrideHook ? brideId : "");
 
   const title =
     bride

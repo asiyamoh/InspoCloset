@@ -1,6 +1,7 @@
 import { BottomNavigation, BottomNavigationItem } from './bottom-navigation';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { useFavorites } from '../../hooks/useFavorites';
+import { FeatureGate } from '../guards/feature-guard/feature-gate';
 
 export function DynamicBottomNavigation() {
   const navigate = useNavigate();
@@ -15,8 +16,13 @@ export function DynamicBottomNavigation() {
   };
 
   // Calculate total items for grid layout
-  const totalItems = 3 + favorites.length; // Home + Brides + Upload + favorites
-  const gridCols = totalItems === 3 ? 'grid-cols-3' : totalItems === 4 ? 'grid-cols-4' : 'grid-cols-5';
+  // Check if bride feature is enabled to include it in count
+  const environment = window.location.origin.includes('localhost') ? 'local' : 
+                     window.location.origin.includes('develop') ? 'development' : 
+                     window.location.origin.includes('staging') ? 'staging' : 'production';
+  const isBrideEnabled = environment === 'local' || environment === 'development';
+  const totalItems = (isBrideEnabled ? 3 : 2) + favorites.length; // Home + (Brides) + Upload + favorites
+  const gridCols = totalItems === 2 ? 'grid-cols-2' : totalItems === 3 ? 'grid-cols-3' : totalItems === 4 ? 'grid-cols-4' : 'grid-cols-5';
 
   return (
     <BottomNavigation gridCols={gridCols}>
@@ -26,12 +32,14 @@ export function DynamicBottomNavigation() {
         onClick={() => handleNavigation('/home')}
         active={currentPath === '/home'}
       />
-      <BottomNavigationItem
-        icon="👰"
-        label="Brides"
-        onClick={() => handleNavigation('/brides')}
-        active={currentPath === '/brides'}
-      />
+      <FeatureGate feature="bride">
+        <BottomNavigationItem
+          icon="👰"
+          label="Brides"
+          onClick={() => handleNavigation('/brides')}
+          active={currentPath === '/brides'}
+        />
+      </FeatureGate>
       
       {/* Render favorite folders */}
       {!isLoading && favorites.map((favorite) => (

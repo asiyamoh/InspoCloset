@@ -34,9 +34,21 @@ export function FolderDetailContent({ folder, onFolderUpdated, onFolderDeleted }
     navigate({ to: '/home' });
   };
 
+  const handleBackToHome = () => {
+    navigate({ to: '/home' });
+  };
+
   return (
     <>
       <div className="p-4 space-y-6">
+        {/* Back Button */}
+        <button
+          onClick={handleBackToHome}
+          className="flex items-center space-x-2 text-dustyRose hover:text-sageGreen transition-colors mb-4"
+        >
+          <span>←</span>
+          <span>Back to Home</span>
+        </button>
         {/* Folder Header */}
         <div className="bg-white/60 p-6 rounded-lg border border-dustyRose/20 shadow-photo-glue">
           <div className="flex items-center gap-4">
