@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root';
 import { Route as WeddingRouteImport } from './routes/wedding';
 import { Route as UploadRouteImport } from './routes/upload';
+import { Route as SearchResultsRouteImport } from './routes/search-results';
 import { Route as NikahRouteImport } from './routes/nikah';
 import { Route as HomeRouteImport } from './routes/home';
 import { Route as BridesRouteImport } from './routes/brides';
@@ -28,6 +29,11 @@ const WeddingRoute = WeddingRouteImport.update({
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
+  getParentRoute: () => rootRouteImport,
+} as any);
+const SearchResultsRoute = SearchResultsRouteImport.update({
+  id: '/search-results',
+  path: '/search-results',
   getParentRoute: () => rootRouteImport,
 } as any);
 const NikahRoute = NikahRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
   '/nikah': typeof NikahRoute;
+  '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
   '/nikah': typeof NikahRoute;
+  '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
   '/nikah': typeof NikahRoute;
+  '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
   '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/brides'
     | '/home'
     | '/nikah'
+    | '/search-results'
     | '/upload'
     | '/wedding'
     | '/bride-detail/$brideId'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/brides'
     | '/home'
     | '/nikah'
+    | '/search-results'
     | '/upload'
     | '/wedding'
     | '/bride-detail/$brideId'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/brides'
     | '/home'
     | '/nikah'
+    | '/search-results'
     | '/upload'
     | '/wedding'
     | '/bride-detail/$brideId'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   BridesRoute: typeof BridesRoute;
   HomeRoute: typeof HomeRoute;
   NikahRoute: typeof NikahRoute;
+  SearchResultsRoute: typeof SearchResultsRoute;
   UploadRoute: typeof UploadRoute;
   WeddingRoute: typeof WeddingRoute;
   BrideDetailBrideIdRoute: typeof BrideDetailBrideIdRoute;
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/upload';
       fullPath: '/upload';
       preLoaderRoute: typeof UploadRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/search-results': {
+      id: '/search-results';
+      path: '/search-results';
+      fullPath: '/search-results';
+      preLoaderRoute: typeof SearchResultsRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/nikah': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   BridesRoute: BridesRoute,
   HomeRoute: HomeRoute,
   NikahRoute: NikahRoute,
+  SearchResultsRoute: SearchResultsRoute,
   UploadRoute: UploadRoute,
   WeddingRoute: WeddingRoute,
   BrideDetailBrideIdRoute: BrideDetailBrideIdRoute,

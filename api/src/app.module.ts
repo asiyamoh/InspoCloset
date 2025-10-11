@@ -8,6 +8,7 @@ import { PictureModule } from './picture/picture.module';
 import { TagModule } from './tag/tag.module';
 import { UserFavoriteFolderModule } from './user-favorite-folder/user-favorite-folder.module';
 import { BrideModule } from './bride/bride.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BrideModule } from './bride/bride.module';
     TagModule,
     UserFavoriteFolderModule,
     BrideModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
