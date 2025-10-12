@@ -9,10 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
-import { Route as WeddingRouteImport } from './routes/wedding';
 import { Route as UploadRouteImport } from './routes/upload';
 import { Route as SearchResultsRouteImport } from './routes/search-results';
-import { Route as NikahRouteImport } from './routes/nikah';
 import { Route as HomeRouteImport } from './routes/home';
 import { Route as BridesRouteImport } from './routes/brides';
 import { Route as IndexRouteImport } from './routes/index';
@@ -21,11 +19,6 @@ import { Route as FolderFolderIdRouteImport } from './routes/folder.$folderId';
 import { Route as BrideDetailBrideIdRouteImport } from './routes/bride-detail.$brideId';
 import { Route as FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport } from './routes/folder-details.$folderId.subcategory.$subcategoryId';
 
-const WeddingRoute = WeddingRouteImport.update({
-  id: '/wedding',
-  path: '/wedding',
-  getParentRoute: () => rootRouteImport,
-} as any);
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -34,11 +27,6 @@ const UploadRoute = UploadRouteImport.update({
 const SearchResultsRoute = SearchResultsRouteImport.update({
   id: '/search-results',
   path: '/search-results',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const NikahRoute = NikahRouteImport.update({
-  id: '/nikah',
-  path: '/nikah',
   getParentRoute: () => rootRouteImport,
 } as any);
 const HomeRoute = HomeRouteImport.update({
@@ -82,10 +70,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
-  '/nikah': typeof NikahRoute;
   '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
-  '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
   '/folder/$folderId': typeof FolderFolderIdRoute;
   '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
@@ -95,10 +81,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
-  '/nikah': typeof NikahRoute;
   '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
-  '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
   '/folder/$folderId': typeof FolderFolderIdRoute;
   '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
@@ -109,10 +93,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute;
   '/brides': typeof BridesRoute;
   '/home': typeof HomeRoute;
-  '/nikah': typeof NikahRoute;
   '/search-results': typeof SearchResultsRoute;
   '/upload': typeof UploadRoute;
-  '/wedding': typeof WeddingRoute;
   '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
   '/folder/$folderId': typeof FolderFolderIdRoute;
   '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
@@ -124,10 +106,8 @@ export interface FileRouteTypes {
     | '/'
     | '/brides'
     | '/home'
-    | '/nikah'
     | '/search-results'
     | '/upload'
-    | '/wedding'
     | '/bride-detail/$brideId'
     | '/folder/$folderId'
     | '/picture-detail/$pictureId'
@@ -137,10 +117,8 @@ export interface FileRouteTypes {
     | '/'
     | '/brides'
     | '/home'
-    | '/nikah'
     | '/search-results'
     | '/upload'
-    | '/wedding'
     | '/bride-detail/$brideId'
     | '/folder/$folderId'
     | '/picture-detail/$pictureId'
@@ -150,10 +128,8 @@ export interface FileRouteTypes {
     | '/'
     | '/brides'
     | '/home'
-    | '/nikah'
     | '/search-results'
     | '/upload'
-    | '/wedding'
     | '/bride-detail/$brideId'
     | '/folder/$folderId'
     | '/picture-detail/$pictureId'
@@ -164,10 +140,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   BridesRoute: typeof BridesRoute;
   HomeRoute: typeof HomeRoute;
-  NikahRoute: typeof NikahRoute;
   SearchResultsRoute: typeof SearchResultsRoute;
   UploadRoute: typeof UploadRoute;
-  WeddingRoute: typeof WeddingRoute;
   BrideDetailBrideIdRoute: typeof BrideDetailBrideIdRoute;
   FolderFolderIdRoute: typeof FolderFolderIdRoute;
   PictureDetailPictureIdRoute: typeof PictureDetailPictureIdRoute;
@@ -176,13 +150,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wedding': {
-      id: '/wedding';
-      path: '/wedding';
-      fullPath: '/wedding';
-      preLoaderRoute: typeof WeddingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
     '/upload': {
       id: '/upload';
       path: '/upload';
@@ -195,13 +162,6 @@ declare module '@tanstack/react-router' {
       path: '/search-results';
       fullPath: '/search-results';
       preLoaderRoute: typeof SearchResultsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/nikah': {
-      id: '/nikah';
-      path: '/nikah';
-      fullPath: '/nikah';
-      preLoaderRoute: typeof NikahRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/home': {
@@ -260,10 +220,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BridesRoute: BridesRoute,
   HomeRoute: HomeRoute,
-  NikahRoute: NikahRoute,
   SearchResultsRoute: SearchResultsRoute,
   UploadRoute: UploadRoute,
-  WeddingRoute: WeddingRoute,
   BrideDetailBrideIdRoute: BrideDetailBrideIdRoute,
   FolderFolderIdRoute: FolderFolderIdRoute,
   PictureDetailPictureIdRoute: PictureDetailPictureIdRoute,

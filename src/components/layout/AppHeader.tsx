@@ -28,8 +28,6 @@ export function AppHeader() {
       ? "InspoCloset"
       : pathname === "/brides"
       ? "Brides"
-      : pathname === "/wedding"
-      ? "Wedding"
       : pathname === "/upload"
       ? "New Upload"
       : "InspoCloset";

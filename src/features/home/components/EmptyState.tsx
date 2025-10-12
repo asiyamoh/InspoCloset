@@ -22,8 +22,8 @@ export function EmptyState({ onAddFolder }: EmptyStateProps) {
           Welcome to Your Design Library
         </h2>
         <p className="text-sageGreen text-lg leading-relaxed">
-          Build your reference library of wedding dress elements. 
-          Organize necklines, silhouettes, and details to quickly find inspiration for any bride.
+          Build your reference library of dress elements. 
+          Organize necklines, silhouettes, and details to quickly find inspiration for any client.
         </p>
       </div>
 
