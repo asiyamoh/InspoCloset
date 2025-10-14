@@ -4,7 +4,7 @@ import { SearchResultsGrid } from './components/SearchResultsGrid';
 import { useSearchPictures } from './hooks/useSearchPictures';
 
 export function SearchResultsPage() {
-  const { tag, q } = useSearch({ from: '/search-results' });
+  const { tag, q } = useSearch({ from: '/_authenticated/search-results' });
   const searchTerm = tag || q || '';
   const { pictures, isLoading, error } = useSearchPictures(searchTerm);
 

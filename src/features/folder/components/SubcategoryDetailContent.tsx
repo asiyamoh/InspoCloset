@@ -1,4 +1,5 @@
-import { FolderResponse, PictureResponse } from "../../../utils/api/folder-api";
+import { FolderResponse } from "../hooks/useFolderDetail";
+import { PictureResponse } from "../hooks/useSubcategoryPictures";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AddPicturesToSubcategoryModal } from "./AddPicturesToSubcategoryModal";

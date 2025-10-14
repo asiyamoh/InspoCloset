@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PictureUpload } from "../types";
 import { API_URL } from "../../../utils/constants";
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useAddPicturesToSubcategory() {
   const [isUploading, setIsUploading] = useState(false);
@@ -27,9 +28,14 @@ export function useAddPicturesToSubcategory() {
         formData.append(`pictures[${index}].file`, picture.file);
         formData.append(`pictures[${index}].tags`, JSON.stringify(picture.tags));
       });
-      
+
+      // Get auth token and build headers
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/pictures/subcategory/${categoryId}/pictures`, {
         method: 'POST',
+        headers: authHeaders,
         body: formData,
       });
 

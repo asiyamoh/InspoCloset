@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UploadFormData, UploadResult } from '../types';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -26,9 +27,13 @@ export function useUpload() {
         uploadFormData.append(`pictures[${index}].tags`, JSON.stringify([])); // Empty tags for now
       });
 
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/pictures/subcategory/${formData.selectedSubcategory!.id}/pictures`, {
         method: 'POST',
         body: uploadFormData,
+        headers: authHeaders,
       });
 
       if (!response.ok) {

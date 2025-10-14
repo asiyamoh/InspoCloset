@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { API_URL } from '../utils/constants';
 import { SearchResponse, TagSearchResult } from '../types/search.types';
+import { getAuthToken, buildAuthHeaders } from '../utils/api/auth-headers';
 
 export function useSearch() {
   const [results, setResults] = useState<TagSearchResult[]>([]);
@@ -17,7 +18,12 @@ export function useSearch() {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}&type=tags&limit=10`);
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
+      const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}&type=tags&limit=10`, {
+        headers: authHeaders,
+      });
       
       if (!response.ok) {
         const errorData = await response.json();

@@ -1,18 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException, UseGuards, Req } from '@nestjs/common';
 import { BrideService } from './bride.service';
 import { CreateBrideDto } from './dto/create-bride.dto';
 import { UpdateBrideDto } from './dto/update-bride.dto';
 import { BrideResponseDto } from './dto/bride-response.dto';
+import { AuthGuard } from '../auth/supabase-auth.guard';
 
 @Controller('brides')
+@UseGuards(AuthGuard)
 export class BrideController {
   constructor(private readonly brideService: BrideService) {}
 
   @Post()
-  async createBride(@Body() createBrideDto: CreateBrideDto): Promise<BrideResponseDto> {
+  async createBride(
+    @Body() createBrideDto: CreateBrideDto,
+    @Req() req: any
+  ): Promise<BrideResponseDto> {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      return await this.brideService.createBride(defaultProfileId, createBrideDto);
+      const user = req.user;
+      return await this.brideService.createBride(user.id, createBrideDto);
     } catch (error) {
       throw new HttpException(
         error.message || 'Failed to create bride',
@@ -22,10 +27,10 @@ export class BrideController {
   }
 
   @Get()
-  async getAllBrides(): Promise<BrideResponseDto[]> {
+  async getAllBrides(@Req() req: any): Promise<BrideResponseDto[]> {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      return await this.brideService.getAllBrides(defaultProfileId);
+      const user = req.user;
+      return await this.brideService.getAllBrides(user.id);
     } catch (error) {
       throw new HttpException(
         'Failed to fetch brides',
@@ -35,10 +40,10 @@ export class BrideController {
   }
 
   @Get(':id')
-  async getBrideById(@Param('id') id: string): Promise<BrideResponseDto> {
+  async getBrideById(@Param('id') id: string, @Req() req: any): Promise<BrideResponseDto> {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      return await this.brideService.getBrideById(defaultProfileId, id);
+      const user = req.user;
+      return await this.brideService.getBrideById(user.id, id);
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) {
         throw error;
@@ -54,10 +59,11 @@ export class BrideController {
   async updateBride(
     @Param('id') id: string,
     @Body() updateBrideDto: UpdateBrideDto,
+    @Req() req: any
   ): Promise<BrideResponseDto> {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      return await this.brideService.updateBride(defaultProfileId, id, updateBrideDto);
+      const user = req.user;
+      return await this.brideService.updateBride(user.id, id, updateBrideDto);
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) {
         throw error;
@@ -70,10 +76,10 @@ export class BrideController {
   }
 
   @Delete(':id')
-  async deleteBride(@Param('id') id: string): Promise<{ message: string }> {
+  async deleteBride(@Param('id') id: string, @Req() req: any): Promise<{ message: string }> {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      return await this.brideService.deleteBride(defaultProfileId, id);
+      const user = req.user;
+      return await this.brideService.deleteBride(user.id, id);
     } catch (error) {
       if (error.status === HttpStatus.NOT_FOUND) {
         throw error;

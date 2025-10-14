@@ -3,7 +3,7 @@ import { Modal } from "../../../components/ui/Modal";
 import { Step3PicturesTags } from "./Step3PicturesTags";
 import { useAddPicturesToSubcategory } from "../hooks/useAddPicturesToSubcategory";
 import { PictureUpload, Subcategory } from "../types";
-import { FolderResponse } from "../../../utils/api/folder-api";
+import { FolderResponse } from "../hooks/useFolderDetail";
 
 interface AddPicturesToSubcategoryModalProps {
   isOpen: boolean;

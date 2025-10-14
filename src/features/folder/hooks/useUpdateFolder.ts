@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { FolderResponse } from '@/utils/api/folder-api';
+import { FolderResponse } from './useFolderDetail';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export interface UpdateFolderData {
   name?: string;
@@ -45,10 +46,15 @@ export function useUpdateFolder() {
         formData.append('icon', data.icon);
       }
 
+      // Get auth token and build headers
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       // Make API call
       const response = await fetch(`${API_URL}/folders/${folderId}`, {
         method: 'PUT',
         body: formData,
+        headers: authHeaders,
       });
 
       if (!response.ok) {

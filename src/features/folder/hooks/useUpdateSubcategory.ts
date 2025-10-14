@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export interface UpdateSubcategoryFormData {
   name: string;
@@ -54,9 +55,13 @@ export function useUpdateSubcategory() {
         formData.append('icon', data.icon);
       }
 
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/folders/subcategory/${subcategoryId}`, {
         method: 'PUT',
         body: formData,
+        headers: authHeaders,
       });
 
       if (!response.ok) {

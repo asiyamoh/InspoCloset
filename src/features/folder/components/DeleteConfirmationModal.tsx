@@ -1,5 +1,5 @@
 import { Modal } from '../../../components/ui/Modal';
-import { FolderResponse } from '@/utils/api/folder-api';
+import { FolderResponse } from '../hooks/useFolderDetail';
 import { useDeleteFolder } from '../hooks/useDeleteFolder';
 
 interface DeleteConfirmationModalProps {

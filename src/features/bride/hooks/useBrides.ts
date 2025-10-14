@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Bride } from "../types";
 import { API_URL } from "../../../utils/constants";
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useBrides() {
   const [brides, setBrides] = useState<Bride[]>([]);
@@ -12,7 +13,12 @@ export function useBrides() {
       setIsLoading(true);
       setError(undefined);
       
-      const response = await fetch(`${API_URL}/brides`);
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
+      const response = await fetch(`${API_URL}/brides`, {
+        headers: authHeaders,
+      });
       
       if (!response.ok) {
         const errorData = await response.json();

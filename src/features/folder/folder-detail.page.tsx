@@ -5,7 +5,7 @@ import { AppHeader } from "../../components/layout/AppHeader";
 import { FolderDetailContent } from "./components/FolderDetailContent";
 
 export function FolderDetailPage() {
-  const { folderId } = useParams({ from: "/folder/$folderId" });
+  const { folderId } = useParams({ from: "/_authenticated/folder/$folderId" });
   const { folder, loading, error, refreshFolder } = useFolderDetail(folderId);
 
   if (loading) {

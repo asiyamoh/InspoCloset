@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { folderApi } from '../utils/api/folder-api';
 import { API_URL } from '../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../utils/api/auth-headers';
 
 export interface FavoriteFolder {
   id: string;
@@ -52,7 +52,19 @@ export async function fetchFavorites(): Promise<FavoriteFolder[]> {
     setGlobalIsLoading(true);
     setGlobalError(null);
     
-    const data = await folderApi.getFavorites();
+    const token = await getAuthToken();
+    const authHeaders = buildAuthHeaders(token);
+
+    const response = await fetch(`${API_URL}/user-favorite-folders/favorites`, {
+      headers: authHeaders,
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch favorites');
+    }
+    
+    const data: FavoriteFoldersResponse[] = await response.json();
     
     // Extract folder data from the response
     const favoriteFolders = data.map(item => ({
@@ -76,8 +88,12 @@ export async function fetchFavorites(): Promise<FavoriteFolder[]> {
 // Utility function to toggle favorite
 export async function toggleFavorite(folderId: string): Promise<{ isFavorite: boolean; message: string }> {
   try {
+    const token = await getAuthToken();
+    const authHeaders = buildAuthHeaders(token);
+
     const response = await fetch(`${API_URL}/user-favorite-folders/toggle/${folderId}`, {
       method: 'PUT',
+      headers: authHeaders,
     });
 
     if (!response.ok) {
@@ -100,7 +116,12 @@ export async function toggleFavorite(folderId: string): Promise<{ isFavorite: bo
 // Utility function to check favorite status
 export async function checkFavoriteStatus(folderId: string): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}/user-favorite-folders/check/${folderId}`);
+    const token = await getAuthToken();
+    const authHeaders = buildAuthHeaders(token);
+
+    const response = await fetch(`${API_URL}/user-favorite-folders/check/${folderId}`, {
+      headers: authHeaders,
+    });
     
     if (!response.ok) {
       throw new Error('Failed to check favorite status');

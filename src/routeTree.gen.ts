@@ -9,34 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
-import { Route as UploadRouteImport } from './routes/upload';
-import { Route as SearchResultsRouteImport } from './routes/search-results';
-import { Route as HomeRouteImport } from './routes/home';
-import { Route as BridesRouteImport } from './routes/brides';
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
+import { Route as AuthRouteImport } from './routes/_auth';
 import { Route as IndexRouteImport } from './routes/index';
-import { Route as PictureDetailPictureIdRouteImport } from './routes/picture-detail.$pictureId';
-import { Route as FolderFolderIdRouteImport } from './routes/folder.$folderId';
-import { Route as BrideDetailBrideIdRouteImport } from './routes/bride-detail.$brideId';
-import { Route as FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport } from './routes/folder-details.$folderId.subcategory.$subcategoryId';
+import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload';
+import { Route as AuthenticatedSearchResultsRouteImport } from './routes/_authenticated/search-results';
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home';
+import { Route as AuthenticatedBridesRouteImport } from './routes/_authenticated/brides';
+import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up';
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in';
+import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-password';
+import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password';
+import { Route as AuthenticatedPictureDetailPictureIdRouteImport } from './routes/_authenticated/picture-detail.$pictureId';
+import { Route as AuthenticatedFolderFolderIdRouteImport } from './routes/_authenticated/folder.$folderId';
+import { Route as AuthenticatedBrideDetailBrideIdRouteImport } from './routes/_authenticated/bride-detail.$brideId';
+import { Route as AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRouteImport } from './routes/_authenticated/folder-details.$folderId.subcategory.$subcategoryId';
 
-const UploadRoute = UploadRouteImport.update({
-  id: '/upload',
-  path: '/upload',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any);
-const SearchResultsRoute = SearchResultsRouteImport.update({
-  id: '/search-results',
-  path: '/search-results',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const BridesRoute = BridesRouteImport.update({
-  id: '/brides',
-  path: '/brides',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any);
 const IndexRoute = IndexRouteImport.update({
@@ -44,66 +38,128 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any);
-const PictureDetailPictureIdRoute = PictureDetailPictureIdRouteImport.update({
-  id: '/picture-detail/$pictureId',
-  path: '/picture-detail/$pictureId',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => AuthenticatedRoute,
 } as any);
-const FolderFolderIdRoute = FolderFolderIdRouteImport.update({
-  id: '/folder/$folderId',
-  path: '/folder/$folderId',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedSearchResultsRoute =
+  AuthenticatedSearchResultsRouteImport.update({
+    id: '/search-results',
+    path: '/search-results',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any);
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRoute,
 } as any);
-const BrideDetailBrideIdRoute = BrideDetailBrideIdRouteImport.update({
-  id: '/bride-detail/$brideId',
-  path: '/bride-detail/$brideId',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedBridesRoute = AuthenticatedBridesRouteImport.update({
+  id: '/brides',
+  path: '/brides',
+  getParentRoute: () => AuthenticatedRoute,
 } as any);
-const FolderDetailsFolderIdSubcategorySubcategoryIdRoute =
-  FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport.update({
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
+} as any);
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthRoute,
+} as any);
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any);
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any);
+const AuthenticatedPictureDetailPictureIdRoute =
+  AuthenticatedPictureDetailPictureIdRouteImport.update({
+    id: '/picture-detail/$pictureId',
+    path: '/picture-detail/$pictureId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any);
+const AuthenticatedFolderFolderIdRoute =
+  AuthenticatedFolderFolderIdRouteImport.update({
+    id: '/folder/$folderId',
+    path: '/folder/$folderId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any);
+const AuthenticatedBrideDetailBrideIdRoute =
+  AuthenticatedBrideDetailBrideIdRouteImport.update({
+    id: '/bride-detail/$brideId',
+    path: '/bride-detail/$brideId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any);
+const AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute =
+  AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRouteImport.update({
     id: '/folder-details/$folderId/subcategory/$subcategoryId',
     path: '/folder-details/$folderId/subcategory/$subcategoryId',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AuthenticatedRoute,
   } as any);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
-  '/brides': typeof BridesRoute;
-  '/home': typeof HomeRoute;
-  '/search-results': typeof SearchResultsRoute;
-  '/upload': typeof UploadRoute;
-  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
-  '/folder/$folderId': typeof FolderFolderIdRoute;
-  '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
-  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
+  '/forgot-password': typeof AuthForgotPasswordRoute;
+  '/reset-password': typeof AuthResetPasswordRoute;
+  '/sign-in': typeof AuthSignInRoute;
+  '/sign-up': typeof AuthSignUpRoute;
+  '/brides': typeof AuthenticatedBridesRoute;
+  '/home': typeof AuthenticatedHomeRoute;
+  '/search-results': typeof AuthenticatedSearchResultsRoute;
+  '/upload': typeof AuthenticatedUploadRoute;
+  '/bride-detail/$brideId': typeof AuthenticatedBrideDetailBrideIdRoute;
+  '/folder/$folderId': typeof AuthenticatedFolderFolderIdRoute;
+  '/picture-detail/$pictureId': typeof AuthenticatedPictureDetailPictureIdRoute;
+  '/folder-details/$folderId/subcategory/$subcategoryId': typeof AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
-  '/brides': typeof BridesRoute;
-  '/home': typeof HomeRoute;
-  '/search-results': typeof SearchResultsRoute;
-  '/upload': typeof UploadRoute;
-  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
-  '/folder/$folderId': typeof FolderFolderIdRoute;
-  '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
-  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
+  '/forgot-password': typeof AuthForgotPasswordRoute;
+  '/reset-password': typeof AuthResetPasswordRoute;
+  '/sign-in': typeof AuthSignInRoute;
+  '/sign-up': typeof AuthSignUpRoute;
+  '/brides': typeof AuthenticatedBridesRoute;
+  '/home': typeof AuthenticatedHomeRoute;
+  '/search-results': typeof AuthenticatedSearchResultsRoute;
+  '/upload': typeof AuthenticatedUploadRoute;
+  '/bride-detail/$brideId': typeof AuthenticatedBrideDetailBrideIdRoute;
+  '/folder/$folderId': typeof AuthenticatedFolderFolderIdRoute;
+  '/picture-detail/$pictureId': typeof AuthenticatedPictureDetailPictureIdRoute;
+  '/folder-details/$folderId/subcategory/$subcategoryId': typeof AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
-  '/brides': typeof BridesRoute;
-  '/home': typeof HomeRoute;
-  '/search-results': typeof SearchResultsRoute;
-  '/upload': typeof UploadRoute;
-  '/bride-detail/$brideId': typeof BrideDetailBrideIdRoute;
-  '/folder/$folderId': typeof FolderFolderIdRoute;
-  '/picture-detail/$pictureId': typeof PictureDetailPictureIdRoute;
-  '/folder-details/$folderId/subcategory/$subcategoryId': typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
+  '/_auth': typeof AuthRouteWithChildren;
+  '/_authenticated': typeof AuthenticatedRouteWithChildren;
+  '/_auth/forgot-password': typeof AuthForgotPasswordRoute;
+  '/_auth/reset-password': typeof AuthResetPasswordRoute;
+  '/_auth/sign-in': typeof AuthSignInRoute;
+  '/_auth/sign-up': typeof AuthSignUpRoute;
+  '/_authenticated/brides': typeof AuthenticatedBridesRoute;
+  '/_authenticated/home': typeof AuthenticatedHomeRoute;
+  '/_authenticated/search-results': typeof AuthenticatedSearchResultsRoute;
+  '/_authenticated/upload': typeof AuthenticatedUploadRoute;
+  '/_authenticated/bride-detail/$brideId': typeof AuthenticatedBrideDetailBrideIdRoute;
+  '/_authenticated/folder/$folderId': typeof AuthenticatedFolderFolderIdRoute;
+  '/_authenticated/picture-detail/$pictureId': typeof AuthenticatedPictureDetailPictureIdRoute;
+  '/_authenticated/folder-details/$folderId/subcategory/$subcategoryId': typeof AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
+    | '/forgot-password'
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
     | '/brides'
     | '/home'
     | '/search-results'
@@ -115,6 +171,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
+    | '/forgot-password'
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
     | '/brides'
     | '/home'
     | '/search-results'
@@ -126,56 +186,42 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/brides'
-    | '/home'
-    | '/search-results'
-    | '/upload'
-    | '/bride-detail/$brideId'
-    | '/folder/$folderId'
-    | '/picture-detail/$pictureId'
-    | '/folder-details/$folderId/subcategory/$subcategoryId';
+    | '/_auth'
+    | '/_authenticated'
+    | '/_auth/forgot-password'
+    | '/_auth/reset-password'
+    | '/_auth/sign-in'
+    | '/_auth/sign-up'
+    | '/_authenticated/brides'
+    | '/_authenticated/home'
+    | '/_authenticated/search-results'
+    | '/_authenticated/upload'
+    | '/_authenticated/bride-detail/$brideId'
+    | '/_authenticated/folder/$folderId'
+    | '/_authenticated/picture-detail/$pictureId'
+    | '/_authenticated/folder-details/$folderId/subcategory/$subcategoryId';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  BridesRoute: typeof BridesRoute;
-  HomeRoute: typeof HomeRoute;
-  SearchResultsRoute: typeof SearchResultsRoute;
-  UploadRoute: typeof UploadRoute;
-  BrideDetailBrideIdRoute: typeof BrideDetailBrideIdRoute;
-  FolderFolderIdRoute: typeof FolderFolderIdRoute;
-  PictureDetailPictureIdRoute: typeof PictureDetailPictureIdRoute;
-  FolderDetailsFolderIdSubcategorySubcategoryIdRoute: typeof FolderDetailsFolderIdSubcategorySubcategoryIdRoute;
+  AuthRoute: typeof AuthRouteWithChildren;
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/upload': {
-      id: '/upload';
-      path: '/upload';
-      fullPath: '/upload';
-      preLoaderRoute: typeof UploadRouteImport;
+    '/_authenticated': {
+      id: '/_authenticated';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof AuthenticatedRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/search-results': {
-      id: '/search-results';
-      path: '/search-results';
-      fullPath: '/search-results';
-      preLoaderRoute: typeof SearchResultsRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/home': {
-      id: '/home';
-      path: '/home';
-      fullPath: '/home';
-      preLoaderRoute: typeof HomeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/brides': {
-      id: '/brides';
-      path: '/brides';
-      fullPath: '/brides';
-      preLoaderRoute: typeof BridesRouteImport;
+    '/_auth': {
+      id: '/_auth';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof AuthRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     '/': {
@@ -185,48 +231,141 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
     };
-    '/picture-detail/$pictureId': {
-      id: '/picture-detail/$pictureId';
+    '/_authenticated/upload': {
+      id: '/_authenticated/upload';
+      path: '/upload';
+      fullPath: '/upload';
+      preLoaderRoute: typeof AuthenticatedUploadRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_authenticated/search-results': {
+      id: '/_authenticated/search-results';
+      path: '/search-results';
+      fullPath: '/search-results';
+      preLoaderRoute: typeof AuthenticatedSearchResultsRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_authenticated/home': {
+      id: '/_authenticated/home';
+      path: '/home';
+      fullPath: '/home';
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_authenticated/brides': {
+      id: '/_authenticated/brides';
+      path: '/brides';
+      fullPath: '/brides';
+      preLoaderRoute: typeof AuthenticatedBridesRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
+    };
+    '/_auth/sign-up': {
+      id: '/_auth/sign-up';
+      path: '/sign-up';
+      fullPath: '/sign-up';
+      preLoaderRoute: typeof AuthSignUpRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    '/_auth/sign-in': {
+      id: '/_auth/sign-in';
+      path: '/sign-in';
+      fullPath: '/sign-in';
+      preLoaderRoute: typeof AuthSignInRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password';
+      path: '/reset-password';
+      fullPath: '/reset-password';
+      preLoaderRoute: typeof AuthResetPasswordRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    '/_auth/forgot-password': {
+      id: '/_auth/forgot-password';
+      path: '/forgot-password';
+      fullPath: '/forgot-password';
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    '/_authenticated/picture-detail/$pictureId': {
+      id: '/_authenticated/picture-detail/$pictureId';
       path: '/picture-detail/$pictureId';
       fullPath: '/picture-detail/$pictureId';
-      preLoaderRoute: typeof PictureDetailPictureIdRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof AuthenticatedPictureDetailPictureIdRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
     };
-    '/folder/$folderId': {
-      id: '/folder/$folderId';
+    '/_authenticated/folder/$folderId': {
+      id: '/_authenticated/folder/$folderId';
       path: '/folder/$folderId';
       fullPath: '/folder/$folderId';
-      preLoaderRoute: typeof FolderFolderIdRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof AuthenticatedFolderFolderIdRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
     };
-    '/bride-detail/$brideId': {
-      id: '/bride-detail/$brideId';
+    '/_authenticated/bride-detail/$brideId': {
+      id: '/_authenticated/bride-detail/$brideId';
       path: '/bride-detail/$brideId';
       fullPath: '/bride-detail/$brideId';
-      preLoaderRoute: typeof BrideDetailBrideIdRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof AuthenticatedBrideDetailBrideIdRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
     };
-    '/folder-details/$folderId/subcategory/$subcategoryId': {
-      id: '/folder-details/$folderId/subcategory/$subcategoryId';
+    '/_authenticated/folder-details/$folderId/subcategory/$subcategoryId': {
+      id: '/_authenticated/folder-details/$folderId/subcategory/$subcategoryId';
       path: '/folder-details/$folderId/subcategory/$subcategoryId';
       fullPath: '/folder-details/$folderId/subcategory/$subcategoryId';
-      preLoaderRoute: typeof FolderDetailsFolderIdSubcategorySubcategoryIdRouteImport;
-      parentRoute: typeof rootRouteImport;
+      preLoaderRoute: typeof AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRouteImport;
+      parentRoute: typeof AuthenticatedRoute;
     };
   }
 }
 
+interface AuthRouteChildren {
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute;
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute;
+  AuthSignInRoute: typeof AuthSignInRoute;
+  AuthSignUpRoute: typeof AuthSignUpRoute;
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
+};
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedBridesRoute: typeof AuthenticatedBridesRoute;
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute;
+  AuthenticatedSearchResultsRoute: typeof AuthenticatedSearchResultsRoute;
+  AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute;
+  AuthenticatedBrideDetailBrideIdRoute: typeof AuthenticatedBrideDetailBrideIdRoute;
+  AuthenticatedFolderFolderIdRoute: typeof AuthenticatedFolderFolderIdRoute;
+  AuthenticatedPictureDetailPictureIdRoute: typeof AuthenticatedPictureDetailPictureIdRoute;
+  AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute: typeof AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute;
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedBridesRoute: AuthenticatedBridesRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedSearchResultsRoute: AuthenticatedSearchResultsRoute,
+  AuthenticatedUploadRoute: AuthenticatedUploadRoute,
+  AuthenticatedBrideDetailBrideIdRoute: AuthenticatedBrideDetailBrideIdRoute,
+  AuthenticatedFolderFolderIdRoute: AuthenticatedFolderFolderIdRoute,
+  AuthenticatedPictureDetailPictureIdRoute:
+    AuthenticatedPictureDetailPictureIdRoute,
+  AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute:
+    AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute,
+};
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+);
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BridesRoute: BridesRoute,
-  HomeRoute: HomeRoute,
-  SearchResultsRoute: SearchResultsRoute,
-  UploadRoute: UploadRoute,
-  BrideDetailBrideIdRoute: BrideDetailBrideIdRoute,
-  FolderFolderIdRoute: FolderFolderIdRoute,
-  PictureDetailPictureIdRoute: PictureDetailPictureIdRoute,
-  FolderDetailsFolderIdSubcategorySubcategoryIdRoute:
-    FolderDetailsFolderIdSubcategorySubcategoryIdRoute,
+  AuthRoute: AuthRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -9,11 +9,13 @@ import { TagModule } from './tag/tag.module';
 import { UserFavoriteFolderModule } from './user-favorite-folder/user-favorite-folder.module';
 import { BrideModule } from './bride/bride.module';
 import { SearchModule } from './search/search.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    AuthModule,
     FolderModule,
     PictureModule,
     TagModule,

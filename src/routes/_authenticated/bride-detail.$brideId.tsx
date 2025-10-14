@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BrideDetailPage } from "../features/bride/bride-detail.page";
-import { FeatureGate } from "../components/guards/feature-guard/feature-gate";
+import { BrideDetailPage } from "../../features/bride/bride-detail.page";
+import { FeatureGate } from "../../components/guards/feature-guard/feature-gate";
 
 function BrideDetailRoute() {
   return (
@@ -10,6 +10,6 @@ function BrideDetailRoute() {
   );
 }
 
-export const Route = createFileRoute("/bride-detail/$brideId")({
+export const Route = createFileRoute("/_authenticated/bride-detail/$brideId")({
   component: BrideDetailRoute,
 });

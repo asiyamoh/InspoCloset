@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CategoryFormData } from '../types';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useAddCategory() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,9 +77,13 @@ export function useAddCategory() {
           });
         }
       });
+      // Get auth token and build headers
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
 
       // Make API call
       const response = await fetch(`${API_URL}/folders/${folderId}/categories`, {
+        headers: authHeaders,
         method: 'POST',
         body: formData,
       });

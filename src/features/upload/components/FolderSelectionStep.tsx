@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { folderApi } from '../../../utils/api/folder-api';
+import { useEffect } from 'react';
+import { useGetUserFolders, FolderResponse } from '../../folder/hooks/useGetUserFolders';
 import { FolderData } from '../types';
 import { Button } from '../../../components/ui/Button';
 
@@ -18,30 +18,22 @@ export function FolderSelectionStep({
   onPrevious,
   profileId
 }: FolderSelectionStepProps) {
-  const [folders, setFolders] = useState<FolderData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { folders, loading: isLoading, error, fetchUserFolders } = useGetUserFolders();
 
   useEffect(() => {
-    fetchFolders();
-  }, [profileId]);
+    fetchUserFolders(profileId);
+  }, [profileId, fetchUserFolders]);
 
-  const fetchFolders = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const fetchedFolders = await folderApi.getUserFolders(profileId);
-      setFolders(fetchedFolders);
-    } catch (err) {
-      setError('Failed to load folders');
-      console.error('Error fetching folders:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFolderClick = (folder: FolderData) => {
-    onFolderSelect(folder);
+  const handleFolderClick = (folder: FolderResponse) => {
+    // Convert FolderResponse to FolderData
+    const folderData: FolderData = {
+      id: folder.id,
+      name: folder.name,
+      iconPicture: folder.iconPicture,
+      subcategories: folder.subcategories,
+      categories: folder.categories
+    };
+    onFolderSelect(folderData);
   };
 
   if (isLoading) {
@@ -57,7 +49,7 @@ export function FolderSelectionStep({
     return (
       <div className="text-center py-8">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button onClick={fetchFolders} outline>
+        <Button onClick={() => fetchUserFolders(profileId)} outline>
           Try Again
         </Button>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FolderFormData } from '../types';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useAddFolder() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,9 +76,13 @@ export function useAddFolder() {
       }
 
       // Make API call
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/folders`, {
         method: 'POST',
         body: formData,
+        headers: authHeaders,
       });
 
       if (!response.ok) {

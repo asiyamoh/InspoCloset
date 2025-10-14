@@ -1,4 +1,4 @@
-import { FolderResponse } from '@/utils/api/folder-api';
+import { FolderResponse } from '../../folder/hooks/useGetAllFolders';
 import { useNavigate } from '@tanstack/react-router';
 
 interface FolderGridProps {

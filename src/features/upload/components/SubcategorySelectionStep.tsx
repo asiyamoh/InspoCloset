@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { folderApi } from '../../../utils/api/folder-api';
+import { useFolderDetail } from '../../folder/hooks/useFolderDetail';
 import { FolderData, SubcategoryData } from '../types';
 import { Button } from '../../../components/ui/Button';
 
@@ -19,23 +19,17 @@ export function SubcategorySelectionStep({
   onPrevious
 }: SubcategorySelectionStepProps) {
   const [subcategories, setSubcategories] = useState<SubcategoryData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { folder, loading: isLoading, error, refreshFolder } = useFolderDetail(selectedFolder?.id || '');
 
   useEffect(() => {
     if (selectedFolder) {
-      fetchSubcategories();
+      refreshFolder();
     }
-  }, [selectedFolder]);
+  }, [selectedFolder, refreshFolder]);
 
-  const fetchSubcategories = async () => {
-    if (!selectedFolder) return;
-
-    try {
-      setIsLoading(true);
-      setError(null);
-      const folderDetails = await folderApi.getFolderById(selectedFolder.id);
-      const folderSubcategories = folderDetails.subcategories || folderDetails.categories || [];
+  useEffect(() => {
+    if (folder) {
+      const folderSubcategories = folder.subcategories || folder.categories || [];
       
       setSubcategories(folderSubcategories.map(sub => ({
         id: sub.id,
@@ -43,13 +37,8 @@ export function SubcategorySelectionStep({
         iconPicture: sub.iconPicture,
         folderId: sub.folderId,
       })));
-    } catch (err) {
-      setError('Failed to load subcategories');
-      console.error('Error fetching subcategories:', err);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [folder]);
 
   const handleSubcategoryClick = (subcategory: SubcategoryData) => {
     onSubcategorySelect(subcategory);
@@ -68,7 +57,7 @@ export function SubcategorySelectionStep({
     return (
       <div className="text-center py-8">
         <p className="text-red-500 mb-4">{error}</p>
-        <Button onClick={fetchSubcategories} outline>
+        <Button onClick={refreshFolder} outline>
           Try Again
         </Button>
       </div>

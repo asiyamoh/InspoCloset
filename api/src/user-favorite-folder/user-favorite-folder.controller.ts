@@ -1,15 +1,17 @@
-import { Controller, Get, Put, Param, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Put, Param, HttpStatus, HttpException, UseGuards, Req } from '@nestjs/common';
 import { UserFavoriteFolderService } from './user-favorite-folder.service';
+import { AuthGuard } from '../auth/supabase-auth.guard';
 
 @Controller('user-favorite-folders')
+@UseGuards(AuthGuard)
 export class UserFavoriteFolderController {
   constructor(private readonly userFavoriteFolderService: UserFavoriteFolderService) {}
 
   @Put('toggle/:folderId')
-  async toggleFavorite(@Param('folderId') folderId: string) {
+  async toggleFavorite(@Param('folderId') folderId: string, @Req() req: any) {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      const result = await this.userFavoriteFolderService.toggleFavorite(defaultProfileId, folderId);
+      const user = req.user;
+      const result = await this.userFavoriteFolderService.toggleFavorite(user.id, folderId);
       return result;
     } catch (error) {
       throw new HttpException(
@@ -20,10 +22,10 @@ export class UserFavoriteFolderController {
   }
 
   @Get('favorites')
-  async getFavorites() {
+  async getFavorites(@Req() req: any) {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      const favorites = await this.userFavoriteFolderService.getFavoritesByProfile(defaultProfileId);
+      const user = req.user;
+      const favorites = await this.userFavoriteFolderService.getFavoritesByProfile(user.id);
       return favorites;
     } catch (error) {
       throw new HttpException(
@@ -34,10 +36,10 @@ export class UserFavoriteFolderController {
   }
 
   @Get('check/:folderId')
-  async checkFavoriteStatus(@Param('folderId') folderId: string) {
+  async checkFavoriteStatus(@Param('folderId') folderId: string, @Req() req: any) {
     try {
-      const defaultProfileId = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-      const isFavorited = await this.userFavoriteFolderService.isFolderFavorited(defaultProfileId, folderId);
+      const user = req.user;
+      const isFavorited = await this.userFavoriteFolderService.isFolderFavorited(user.id, folderId);
       return { isFavorited };
     } catch (error) {
       throw new HttpException(

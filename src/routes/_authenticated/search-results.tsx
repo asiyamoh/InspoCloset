@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { SearchResultsPage } from '../features/search/search-results.page';
+import { SearchResultsPage } from '../../features/search/search-results.page';
 
-export const Route = createFileRoute('/search-results')({
+export const Route = createFileRoute('/_authenticated/search-results')({
   component: SearchResultsPage,
   validateSearch: (search: Record<string, unknown>) => ({
     tag: (search.tag as string) || '',

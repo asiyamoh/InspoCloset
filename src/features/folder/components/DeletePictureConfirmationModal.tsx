@@ -1,5 +1,5 @@
 import { Modal } from '../../../components/ui/Modal';
-import { PictureResponse } from '@/utils/api/folder-api';
+import { PictureResponse } from '../hooks/useSubcategoryPictures';
 import { useDeletePicture } from '../hooks/useDeletePicture';
 
 interface DeletePictureConfirmationModalProps {

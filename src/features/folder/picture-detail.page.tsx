@@ -5,7 +5,7 @@ import { useUpdatePictureTags } from './hooks/useUpdatePictureTags';
 import { DeletePictureConfirmationModal } from './components/DeletePictureConfirmationModal';
 
 export function PictureDetailPage() {
-  const { pictureId } = useParams({ from: '/picture-detail/$pictureId' });
+  const { pictureId } = useParams({ from: '/_authenticated/picture-detail/$pictureId' });
   const navigate = useNavigate();
   const { picture, isLoading, error } = usePictureDetail(pictureId);
   const { updatePictureTags, isUpdating, error: updateError } = useUpdatePictureTags();

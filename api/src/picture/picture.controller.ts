@@ -1,9 +1,11 @@
-import { Controller, Get, Param, Post, Delete, Put, Body, UseInterceptors, UploadedFiles, Req, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param, Post, Delete, Put, Body, UseInterceptors, UploadedFiles, Req, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { PictureService } from './picture.service';
 import { TagService } from '../tag/tag.service';
+import { AuthGuard } from '../auth/supabase-auth.guard';
 
 @Controller('pictures')
+@UseGuards(AuthGuard)
 export class PictureController {
   constructor(
     private readonly pictureService: PictureService,

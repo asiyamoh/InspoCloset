@@ -6,7 +6,7 @@ import { SubcategoryDetailContent } from "./components/SubcategoryDetailContent"
 
 export function SubcategoryDetailPage() {
   const { folderId, subcategoryId } = useParams({ 
-    from: "/folder-details/$folderId/subcategory/$subcategoryId" 
+    from: "/_authenticated/folder-details/$folderId/subcategory/$subcategoryId" 
   });
   const { folder, loading, error } = useFolderDetail(folderId);
   const { pictures, loading: picturesLoading, error: picturesError, refetch: refetchPictures } = useSubcategoryPictures(subcategoryId);

@@ -6,6 +6,7 @@ import { FolderSelectionStep } from './components/FolderSelectionStep';
 import { SubcategorySelectionStep } from './components/SubcategorySelectionStep';
 import { ImageUploadStep } from './components/ImageUploadStep';
 import { UploadFormData, UploadResult } from './types';
+import { useAuthContext } from '../../utils/auth/use-auth-context';
 
 const STEPS = [
   'Select Folder',
@@ -13,10 +14,9 @@ const STEPS = [
   'Upload Photos'
 ];
 
-const DEFAULT_PROFILE_ID = 'bf24ad7d-89c9-46c4-a59d-8fa054eb35ad';
-
 export function UploadPage() {
   const [currentStep, setCurrentStep] = useState(1);
+  const { profile } = useAuthContext();
   const [formData, setFormData] = useState<UploadFormData>({
     selectedFolder: null,
     selectedSubcategory: null,
@@ -86,7 +86,7 @@ export function UploadPage() {
             }))}
             onNext={handleNext}
             onPrevious={handlePrevious}
-            profileId={DEFAULT_PROFILE_ID}
+            profileId={profile?.id || ''}
           />
         );
       

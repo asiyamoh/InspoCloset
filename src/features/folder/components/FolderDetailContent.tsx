@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FolderResponse } from "../../../utils/api/folder-api";
+import { FolderResponse } from "../hooks/useFolderDetail";
 import { useNavigate } from "@tanstack/react-router";
 import { FavoriteToggle } from "./FavoriteToggle";
 import { EditFolderModal } from "./EditFolderModal";

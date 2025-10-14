@@ -37,7 +37,7 @@ export class FolderService {
     createFolderDto: CreateFolderDto,
     files: Express.Multer.File[],
     subcategoriesData: SubcategoryData[],
-    profileId: string = "bf24ad7d-89c9-46c4-a59d-8fa054eb35ad"
+    profileId: string
   ): Promise<FolderResponseDto> {
     const { name, brideId, iconPicture, hasSubcategories } = createFolderDto;
 
@@ -400,9 +400,7 @@ export class FolderService {
 
   async addCategoriesToFolder(
     folderId: string,
-    categoriesData: CategoryData[],
-    brideId?: string,
-    profileId: string = "bf24ad7d-89c9-46c4-a59d-8fa054eb35ad"
+    categoriesData: CategoryData[]
   ): Promise<{
     success: boolean;
     createdCategories: SubcategoryResponseDto[];
@@ -415,7 +413,7 @@ export class FolderService {
     try {
       return await this.prisma.$transaction(async (tx) => {
         try {
-          // Verify folder exists
+          // Verify folder exists and get its brideId
           const folder = await tx.folder.findUnique({
             where: { id: folderId },
           });
@@ -463,7 +461,7 @@ export class FolderService {
                       mimeType: pictureData.file.mimetype,
                     },
                     category.id,
-                    brideId,
+                    folder.brideId, // Use folder's brideId
                     folderId
                   );
 

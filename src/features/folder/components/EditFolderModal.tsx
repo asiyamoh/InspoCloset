@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { IconSelector } from '../../../components/ui/IconSelector';
-import { FolderResponse } from '@/utils/api/folder-api';
+import { FolderResponse } from '../hooks/useFolderDetail';
 import { useUpdateFolder } from '../hooks/useUpdateFolder';
 
 interface EditFolderModalProps {

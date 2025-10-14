@@ -1,9 +1,11 @@
-import { Controller, Get, Query, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Query, HttpStatus, HttpException, UseGuards } from '@nestjs/common';
 import { SearchService } from './search.service';
 import { SearchRequestDto } from './dto/search-request.dto';
 import { SearchResponseDto } from './dto/search-response.dto';
+import { AuthGuard } from '../auth/supabase-auth.guard';
 
 @Controller('search')
+@UseGuards(AuthGuard)
 export class SearchController {
   constructor(private readonly searchService: SearchService) {}
 

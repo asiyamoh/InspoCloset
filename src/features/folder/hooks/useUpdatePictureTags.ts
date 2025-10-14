@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useUpdatePictureTags() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -10,11 +11,15 @@ export function useUpdatePictureTags() {
     setError(null);
 
     try {
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/pictures/${pictureId}/tags`, {
-        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          ...authHeaders,
+          'Content-Type': 'application/json'  // This tells NestJS to parse as JSON
         },
+        method: 'PUT',
         body: JSON.stringify({ tags }),
       });
 

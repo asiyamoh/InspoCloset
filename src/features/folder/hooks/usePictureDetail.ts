@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 interface PictureTag {
   id: string;
@@ -46,7 +47,13 @@ export function usePictureDetail(pictureId: string) {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/pictures/${pictureId}`);
+        // Get auth token and build headers
+        const token = await getAuthToken();
+        const authHeaders = buildAuthHeaders(token);
+
+        const response = await fetch(`${API_URL}/pictures/${pictureId}`, {
+          headers: authHeaders,
+        });
         
         if (!response.ok) {
           if (response.status === 404) {

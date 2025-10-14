@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { API_URL } from '../../../utils/constants';
+import { buildAuthHeaders, getAuthToken } from '../../../utils/api/auth-headers';
 
 export function useDeletePicture() {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -10,8 +11,13 @@ export function useDeletePicture() {
     setErrors({});
 
     try {
+      // Get auth token and build headers
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+
       const response = await fetch(`${API_URL}/pictures/${pictureId}`, {
         method: 'DELETE',
+        headers: authHeaders,
       });
 
       if (!response.ok) {

@@ -1,13 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException, UseInterceptors, UploadedFiles, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, HttpStatus, HttpException, UseInterceptors, UploadedFiles, Req, UseGuards } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { FolderService, SubcategoryData } from './folder.service';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateSubcategoryDto } from './dto/update-subcategory.dto';
 import { FolderResponseDto } from './dto/folder-response.dto';
 import { CategoryData } from './dto/create-category.dto';
-import { Express } from 'express';
+import { AuthGuard } from '../auth/supabase-auth.guard';
 
 @Controller('folders')
+@UseGuards(AuthGuard)
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 
@@ -18,6 +19,9 @@ export class FolderController {
     @Req() req: any
   ): Promise<FolderResponseDto> {
     try {
+      // Get profileId from authenticated user
+      const profileId = req.user.id;
+      
       // Parse FormData
       const formData = req.body;
       
@@ -27,7 +31,7 @@ export class FolderController {
         brideId: formData.brideId || undefined,
         iconPicture: formData.folderIcon ? 'uploaded' : undefined,
         hasSubcategories: formData.hasSubcategories === 'true',
-        profileId: formData.profileId || undefined,
+        profileId: profileId, // Use authenticated user's profileId
       };
 
       // Parse subcategories data
@@ -173,9 +177,7 @@ export class FolderController {
 
       return await this.folderService.addCategoriesToFolder(
         folderId,
-        categoriesData,
-        formData.brideId,
-        formData.profileId
+        categoriesData
       );
     } catch (error) {
       console.error('Error adding categories to folder:', error);

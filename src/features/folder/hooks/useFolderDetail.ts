@@ -1,5 +1,32 @@
 import { useState, useEffect, useCallback } from "react";
-import { folderApi, FolderResponse } from "../../../utils/api/folder-api";
+import { API_URL } from "../../../utils/constants";
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
+
+export interface FolderResponse {
+  id: string;
+  name: string;
+  brideId?: string;
+  profileId?: string;
+  iconPicture?: string;
+  createdAt: string;
+  updatedAt: string;
+  subcategories?: {
+    id: string;
+    name: string;
+    iconPicture?: string;
+    folderId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  categories?: {
+    id: string;
+    name: string;
+    iconPicture?: string;
+    folderId: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+}
 
 export function useFolderDetail(folderId: string) {
   const [folder, setFolder] = useState<FolderResponse | null>(null);
@@ -10,10 +37,26 @@ export function useFolderDetail(folderId: string) {
     try {
       setLoading(true);
       setError(null);
-      const folderData = await folderApi.getFolderById(folderId);
+
+      // Get auth token and build headers
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+      
+      const response = await fetch(`${API_URL}/folders/${folderId}`, {
+        headers: authHeaders,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch folder');
+      }
+      
+      const folderData: FolderResponse = await response.json();
       setFolder(folderData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch folder");
+      console.error('Error fetching folder:', err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to fetch folder";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -3,28 +3,16 @@ import { QuickActionsGrid } from "./components/QuickActionsGrid";
 import { FolderGrid } from "./components/FolderGrid";
 import { EmptyState } from "./components/EmptyState";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { folderApi, FolderResponse } from '@/utils/api/folder-api';
+import { useGetAllFolders } from '../folder/hooks/useGetAllFolders';
 import { AddFolderModal } from '../folder/components/AddFolderModal';
 
 export function HomePage() {
-  const [folders, setFolders] = useState<FolderResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { folders, loading: isLoading, fetchFolders } = useGetAllFolders();
   const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
-
-  const fetchFolders = async () => {
-    try {
-      const fetchedFolders = await folderApi.getAllFolders();
-      setFolders(fetchedFolders);
-    } catch (error) {
-      console.error('Failed to fetch folders:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchFolders();
-  }, []);
+  }, [fetchFolders]);
 
   const handleFolderCreated = () => {
     fetchFolders(); // Refresh folders after creation

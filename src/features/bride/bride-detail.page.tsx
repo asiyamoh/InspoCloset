@@ -4,7 +4,7 @@ import { MainLayout } from "../../components/layout/MainLayout";
 import { useBrideDetail } from "./hooks/useBrideDetail";
 
 export function BrideDetailPage() {
-  const { brideId } = useParams({ from: "/bride-detail/$brideId" });
+  const { brideId } = useParams({ from: "/_authenticated/bride-detail/$brideId" });
 
   const navigate = useNavigate();
   const { bride, isLoading, error, fetchBrideDetail } = useBrideDetail(brideId);

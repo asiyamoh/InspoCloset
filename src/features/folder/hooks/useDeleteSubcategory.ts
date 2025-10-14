@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { API_URL } from '../../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
 
 export function useDeleteSubcategory() {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -9,9 +10,14 @@ export function useDeleteSubcategory() {
     setIsDeleting(true);
     setErrors({});
 
+    // Get auth token and build headers
+    const token = await getAuthToken();
+    const authHeaders = buildAuthHeaders(token);
+
     try {
       const response = await fetch(`${API_URL}/folders/subcategory/${subcategoryId}`, {
         method: 'DELETE',
+        headers: authHeaders,
       });
 
       if (!response.ok) {
