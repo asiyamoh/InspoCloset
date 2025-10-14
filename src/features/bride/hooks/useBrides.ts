@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Bride } from "../types";
 import { API_URL } from "../../../utils/constants";
-import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/auth-headers';
 
 export function useBrides() {
   const [brides, setBrides] = useState<Bride[]>([]);

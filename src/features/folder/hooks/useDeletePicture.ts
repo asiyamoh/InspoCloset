@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { API_URL } from '../../../utils/constants';
-import { buildAuthHeaders, getAuthToken } from '../../../utils/api/auth-headers';
+import { buildAuthHeaders, getAuthToken } from '../../../utils/auth-headers';
 
 export function useDeletePicture() {
   const [isDeleting, setIsDeleting] = useState(false);

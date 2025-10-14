@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { UploadFormData, UploadResult } from '../types';
 import { API_URL } from '../../../utils/constants';
-import { getAuthToken, buildAuthHeaders } from '../../../utils/api/auth-headers';
+import { getAuthToken, buildAuthHeaders } from '../../../utils/auth-headers';
 
 export function useUpload() {
   const [isUploading, setIsUploading] = useState(false);
