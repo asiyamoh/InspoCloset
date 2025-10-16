@@ -1,14 +1,15 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import { AppConfigService } from '../config/app.config.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   private supabase;
 
-  constructor() {
+  constructor(private configService: AppConfigService) {
     this.supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      this.configService.supabaseUrl,
+      this.configService.supabaseServiceRoleKey
     );
   }
 
