@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AppConfigModule } from './config/app.config.module';
 import { DatabaseModule } from './database/database.module';
 import { FolderModule } from './folder/folder.module';
 import { PictureModule } from './picture/picture.module';
@@ -13,7 +13,7 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    AppConfigModule,
     DatabaseModule,
     AuthModule,
     FolderModule,

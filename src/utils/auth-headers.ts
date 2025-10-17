@@ -1,4 +1,4 @@
-import { supabase } from '../supabase/supabase-client';
+import { supabase } from './supabase/supabase-client';
 
 export async function getAuthToken(): Promise<string | null> {
   try {
