@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { API_URL } from '../../../utils/constants';
 import { getAuthToken, buildAuthHeaders } from '../../../utils/auth-headers';
 import { useAuthContext } from '../../../utils/auth/use-auth-context';
