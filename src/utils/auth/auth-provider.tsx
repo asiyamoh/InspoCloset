@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../supabase/supabase-client';
 import { AuthContext, AuthContextType, Profile } from './use-auth-context';
-import { useSessionQuery, useProfileQuery } from '../queries/auth.mutations';
+import { API_URL } from '../../utils/constants';
+import { getAuthToken, buildAuthHeaders } from '../auth-headers';
 
 // Auth Provider Component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -10,39 +11,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
-  // Use the session query from your auth mutations
-  const { data: sessionData, isLoading: sessionLoading } = useSessionQuery();
-  
-  // Use the profile query when we have a user
-  const { data: profileData, isLoading: profileLoading } = useProfileQuery(user?.id);
 
-  useEffect(() => {
-    if (sessionData?.session) {
-      setSession(sessionData.session);
-      setUser(sessionData.session.user);
-    } else {
-      setSession(null);
-      setUser(null);
+  // Fetch profile from backend API
+  const fetchProfileFromBackend = async (): Promise<Profile | null> => {
+    try {
+      const token = await getAuthToken();
+      const authHeaders = buildAuthHeaders(token);
+      
+      const response = await fetch(`${API_URL}/auth/verify`, {
+        headers: authHeaders,
+      });
+
+      if (!response.ok) {
+        console.error('Failed to fetch profile from backend');
+        return null;
+      }
+
+      const authData = await response.json();
+      
+      if (authData.success && authData.profile) {
+        return authData.profile as Profile;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error fetching profile from backend:', error);
+      return null;
     }
-    setLoading(sessionLoading);
-  }, [sessionData, sessionLoading]);
+  };
 
+  // Listen for auth changes and fetch profile
   useEffect(() => {
-    if (profileData) {
-      setProfile(profileData);
-    } else {
-      setProfile(null);
-    }
-  }, [profileData]);
-
-  // Listen for auth changes
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Fetch profile when user is authenticated
+      if (session?.user) {
+        setProfileLoading(true);
+        try {
+          const profileData = await fetchProfileFromBackend();
+          if (profileData) {
+            setProfile(profileData);
+          } else {
+            console.error('Failed to fetch profile from backend');
+            setProfile(null);
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+          setProfile(null);
+        } finally {
+          setProfileLoading(false);
+        }
+      } else {
+        setProfile(null);
+        setProfileLoading(false);
+      }
+      
       setLoading(false);
     });
 
@@ -57,7 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     session,
     profile,
-    loading: loading || profileLoading,
+    loading,
+    profileLoading,
+    emailConfirmed: user?.email_confirmed_at !== null,
     signOut,
   };
 

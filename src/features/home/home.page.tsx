@@ -5,14 +5,20 @@ import { EmptyState } from "./components/EmptyState";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useGetAllFolders } from '../folder/hooks/useGetAllFolders';
 import { AddFolderModal } from '../folder/components/AddFolderModal';
+import { useAuthContext } from '../../utils/auth/use-auth-context';
+import { AuthInitializing, ProfileLoading } from '../../utils/auth/auth-loading.component';
 
 export function HomePage() {
   const { folders, loading: isLoading, fetchFolders } = useGetAllFolders();
+  const { loading: authLoading, profileLoading, profile } = useAuthContext();
   const [isAddFolderModalOpen, setIsAddFolderModalOpen] = useState(false);
 
   useEffect(() => {
-    fetchFolders();
-  }, [fetchFolders]);
+    // Only fetch folders when auth is fully ready
+    if (!authLoading && !profileLoading && profile) {
+      fetchFolders();
+    }
+  }, [authLoading, profileLoading, profile, fetchFolders]);
 
   const handleFolderCreated = () => {
     fetchFolders(); // Refresh folders after creation
@@ -26,6 +32,16 @@ export function HomePage() {
     setIsAddFolderModalOpen(false);
   };
 
+  // Show auth loading states
+  if (authLoading) {
+    return <AuthInitializing />;
+  }
+
+  if (profileLoading) {
+    return <ProfileLoading />;
+  }
+
+  // Show folders loading
   if (isLoading) {
     return (
       <MainLayout>

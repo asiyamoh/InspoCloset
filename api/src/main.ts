@@ -9,8 +9,16 @@ async function bootstrap() {
   const configService = app.get(AppConfigService);
   
   app.enableCors({
-    origin: configService.corsOrigins,
+    origin: [
+      'http://localhost:3001',  // Your frontend dev server
+      'http://localhost:3000',  // Alternative dev port
+      'http://127.0.0.1:3001',  // Alternative localhost
+      'http://127.0.0.1:3000',  // Alternative localhost
+      'https://inspo-closet-staging.vercel.app'  // Your production frontend
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
   
   const port = configService.port;
