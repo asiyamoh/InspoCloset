@@ -1,41 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../supabase/supabase-client';
-import { Profile } from '../auth/use-auth-context';
-
-// Auth Queries
-export function useSessionQuery() {
-  return useQuery({
-    queryKey: ['auth-session'],
-    queryFn: async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      return data;
-    },
-  });
-}
-
-export function useProfileQuery(userId?: string) {
-  return useQuery({
-    queryKey: ['auth-profile', userId],
-    queryFn: async () => {
-      if (!userId) return null;
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error) throw error;
-      return data as Profile;
-    },
-    enabled: !!userId,
-  });
-}
 
 // Auth Mutations
 export function useAuthMutations() {
-  const queryClient = useQueryClient();
 
   const signInMutation = useMutation({
     mutationFn: async ({ email, password }: { email: string; password: string }) => {
@@ -47,8 +14,7 @@ export function useAuthMutations() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['auth-session'] });
-      queryClient.invalidateQueries({ queryKey: ['auth-profile'] });
+      // Auth state change will handle the rest automatically
     },
   });
 
@@ -78,8 +44,7 @@ export function useAuthMutations() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['auth-session'] });
-      queryClient.invalidateQueries({ queryKey: ['auth-profile'] });
+      // Auth state change will handle the rest automatically
     },
   });
 
@@ -89,7 +54,7 @@ export function useAuthMutations() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.clear();
+      // Auth state change will handle the rest automatically
     },
   });
 

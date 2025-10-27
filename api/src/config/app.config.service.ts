@@ -39,10 +39,15 @@ export class AppConfigService {
 
   get corsOrigins(): string[] {
     if (this.isDevelopment) {
-      return ['http://localhost:3000', 'http://127.0.0.1:3000'];
+      return [
+        'http://localhost:3000', 
+        'http://localhost:3001', 
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001'
+      ];
     }
     if (this.isStaging) {
-      return ['https://your-staging-frontend.com'];
+      return ['https://inspo-closet-staging.vercel.app'];
     }
     return ['https://your-production-frontend.com'];
   }

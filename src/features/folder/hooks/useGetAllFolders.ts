@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { API_URL } from '../../../utils/constants';
 import { getAuthToken, buildAuthHeaders } from '../../../utils/auth-headers';
 import { useAuthContext } from '../../../utils/auth/use-auth-context';
@@ -33,9 +33,14 @@ export function useGetAllFolders() {
   const [folders, setFolders] = useState<FolderResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { profile } = useAuthContext();
+  const { profile, profileLoading } = useAuthContext();
 
   const fetchFolders = useCallback(async (): Promise<void> => {
+    // Don't attempt to fetch if profile is still loading
+    if (profileLoading) {
+      return;
+    }
+
     if (!profile?.id) {
       setError('User profile not available');
       return;
@@ -68,13 +73,14 @@ export function useGetAllFolders() {
     } finally {
       setLoading(false);
     }
-  }, [profile?.id]);
+  }, [profile?.id, profileLoading]);
 
   return {
     folders,
-    loading,
+    loading: loading || profileLoading,
     error,
     fetchFolders,
-    clearError: useCallback(() => setError(null), [])
+    clearError: useCallback(() => setError(null), []),
+    retry: fetchFolders
   };
 }
