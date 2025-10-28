@@ -19,39 +19,46 @@ jobs:
 
       - name: Check for direct push
         run: |
-          MAIN_HEAD=$(git rev-parse origin/main)
           STAGING_HEAD=$(git rev-parse HEAD)
+          MAIN_HEAD=$(git rev-parse origin/main)
           
-          # Find the common ancestor
-          BASE=$(git merge-base origin/main HEAD)
+          # Get all commits in staging that are not in main
+          STAGING_ONLY=$(git rev-list origin/main..HEAD)
           
-          # Get commits that are in staging but not in main
-          STAGING_ONLY_COMMITS=$(git rev-list --count $BASE..$STAGING_HEAD)
-          
-          if [ "$STAGING_ONLY_COMMITS" -eq 0 ]; then
-            echo "✅ No direct push detected - staging is aligned with main"
+          if [ -z "$STAGING_ONLY" ]; then
+            echo "✅ Staging is up to date with main (no new commits)"
             exit 0
           fi
           
-          # Count commits in main that are not in staging
-          MAIN_ONLY_COMMITS=$(git rev-list --count $BASE..$MAIN_HEAD)
+          # Check each commit that's only in staging
+          for commit in $STAGING_ONLY; do
+            PARENT_COUNT=$(git rev-list --parents -n 1 $commit | awk '{print NF-1}')
+            
+            # If it's a merge commit, check if it merges from main
+            if [ "$PARENT_COUNT" -eq 2 ]; then
+              PARENT1=$(git rev-parse ${commit}^1)
+              PARENT2=$(git rev-parse ${commit}^2)
+              
+              # Check if second parent is from main branch
+              if git merge-base --is-ancestor $PARENT2 origin/main && \
+                 git merge-base --is-ancestor origin/main $PARENT2; then
+                echo "✅ Commit $commit is a valid merge from main"
+                continue
+              fi
+            fi
+            
+            # If we get here, this commit is not a merge from main
+            echo "❌ Direct push to staging blocked!"
+            echo ""
+            echo "Commit $commit was pushed directly to staging."
+            echo ""
+            echo "Allowed workflow:"
+            echo "1. Push changes to main (or create PR to main)"
+            echo "2. Merge main into staging"
+            echo ""
+            echo "Direct pushes to staging are not allowed for code quality control."
+            exit 1
+          done
           
-          if [ "$MAIN_ONLY_COMMITS" -gt 0 ]; then
-            echo "✅ Staging is being updated from main"
-            echo "main has $MAIN_ONLY_COMMITS commit(s) that will be merged into staging"
-            exit 0
-          fi
-          
-          # If we get here, staging has commits that main doesn't have
-          echo "❌ Direct push to staging blocked!"
-          echo ""
-          echo "Staging has $STAGING_ONLY_COMMITS commit(s) that don't exist in main."
-          echo ""
-          echo "Allowed workflow:"
-          echo "1. Push changes to main (or create PR to main)"
-          echo "2. Merge main into staging"
-          echo ""
-          echo "Direct pushes to staging are not allowed for code quality control."
-          exit 1
-
-
+          echo "✅ All commits on staging are valid merges from main"
+          exit 0
