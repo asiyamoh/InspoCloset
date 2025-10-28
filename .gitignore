@@ -4,3 +4,5 @@ frontend/node_modules/
 
 dist/
 .env.staging
+
+api/prisma/seed.ts

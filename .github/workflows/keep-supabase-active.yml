@@ -1,0 +1,54 @@
+name: Keep Supabase Active
+
+on:
+  schedule:
+    # Run every day at 6:00 AM UTC (every ~24 hours, well before 7-day pause)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Health Endpoint
+        run: |
+          API_URL="${{ secrets.API_URL || 'https://your-api-url.com' }}"
+          
+          echo "🔍 Pinging health endpoint to keep Supabase active..."
+          
+          # Send GET request to /health endpoint (which does the database health check)
+          response=$(curl -s -w "\n%{http_code}" "$API_URL/health" || echo "000")
+          
+          # Extract status code (last line)
+          status_code=$(echo "$response" | tail -n1)
+          
+          # Extract response body (all but last line)
+          body=$(echo "$response" | head -n-1)
+          
+          if [ "$status_code" -eq 200 ]; then
+            echo "✅ Health check successful!"
+            echo "Response: $body"
+            exit 0
+          else
+            echo "❌ Health check failed with status code: $status_code"
+            echo "Response: $body"
+            exit 1
+          fi
+
+      - name: Verify Database Connection
+        run: |
+          API_URL="${{ secrets.API_URL || 'https://your-api-url.com' }}"
+          
+          # Check if the response contains expected fields
+          response=$(curl -s "$API_URL/health")
+          
+          if echo "$response" | grep -q '"status":"OK"' || echo "$response" | grep -q '"status":"ok"'; then
+            echo "✅ Database connection verified"
+            exit 0
+          else
+            echo "⚠️  Health check response doesn't match expected format"
+            echo "Response: $response"
+            # Don't fail, as long as we got a 200 status code above
+            exit 0
+          fi
+
