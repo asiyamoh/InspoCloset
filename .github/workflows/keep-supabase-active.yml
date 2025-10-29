@@ -10,7 +10,7 @@ jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase Health Endpoint
+      - name: Keep Supabase Active
         run: |
           API_URL="${{ secrets.API_URL || 'https://your-api-url.com' }}"
           
