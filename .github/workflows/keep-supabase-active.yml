@@ -12,43 +12,25 @@ jobs:
     steps:
       - name: Keep Supabase Active
         run: |
-          API_URL="${{ secrets.API_URL || 'https://your-api-url.com' }}"
-          
-          echo "🔍 Pinging health endpoint to keep Supabase active..."
-          
-          # Send GET request to /health endpoint (which does the database health check)
-          response=$(curl -s -w "\n%{http_code}" "$API_URL/health" || echo "000")
-          
-          # Extract status code (last line)
-          status_code=$(echo "$response" | tail -n1)
-          
-          # Extract response body (all but last line)
-          body=$(echo "$response" | head -n-1)
-          
-          if [ "$status_code" -eq 200 ]; then
-            echo "✅ Health check successful!"
-            echo "Response: $body"
+          # Only run on staging branch (or scheduled/manual triggers)
+          if [ "${{ github.ref }}" != "refs/heads/staging" ] && [ "${{ github.event_name }}" != "schedule" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             exit 0
-          else
-            echo "❌ Health check failed with status code: $status_code"
-            echo "Response: $body"
+          fi
+          
+          API_URL="${{ secrets.API_URL }}"
+          
+          if [ -z "$API_URL" ]; then
+            echo "Error: API_URL secret is not set"
             exit 1
           fi
-
-      - name: Verify Database Connection
-        run: |
-          API_URL="${{ secrets.API_URL || 'https://your-api-url.com' }}"
           
-          # Check if the response contains expected fields
-          response=$(curl -s "$API_URL/health")
+          HEALTH_RESPONSE=$(curl -s -w "\n%{http_code}" "${API_URL}/health" 2>&1 || echo -e "\n000")
+          HEALTH_STATUS=$(echo "$HEALTH_RESPONSE" | tail -n1)
           
-          if echo "$response" | grep -q '"status":"OK"' || echo "$response" | grep -q '"status":"ok"'; then
-            echo "✅ Database connection verified"
+          if [ "$HEALTH_STATUS" -eq 200 ]; then
             exit 0
           else
-            echo "⚠️  Health check response doesn't match expected format"
-            echo "Response: $response"
-            # Don't fail, as long as we got a 200 status code above
-            exit 0
+            echo "Health check failed with status code: ${HEALTH_STATUS}"
+            exit 1
           fi
 
