@@ -24,19 +24,8 @@ jobs:
             exit 1
           fi
           
-          echo "DEBUG: API_URL is set"
-          echo "DEBUG: Making request to: ${API_URL}/health"
-          
-          # Get verbose output to see what's happening
-          HEALTH_RESPONSE=$(curl -v -s -w "\nHTTP_CODE:%{http_code}\n" "${API_URL}/health" 2>&1 || echo -e "\nHTTP_CODE:000")
-          
-          echo "DEBUG: Full curl response:"
-          echo "$HEALTH_RESPONSE"
-          echo "---"
-          
-          HEALTH_STATUS=$(echo "$HEALTH_RESPONSE" | grep -o "HTTP_CODE:[0-9]*" | cut -d: -f2 || echo "000")
-          
-          echo "DEBUG: Extracted status code: ${HEALTH_STATUS}"
+          HEALTH_RESPONSE=$(curl -s -w "\n%{http_code}" -L "${API_URL}/health" 2>&1 || echo -e "\n000")
+          HEALTH_STATUS=$(echo "$HEALTH_RESPONSE" | tail -n1)
           
           if [ "$HEALTH_STATUS" -eq 200 ]; then
             exit 0
