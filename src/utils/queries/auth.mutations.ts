@@ -38,6 +38,7 @@ export function useAuthMutations() {
             first_name: firstName,
             last_name: lastName,
           },
+          emailRedirectTo: `${window.location.origin}/email-verified`,
         },
       });
       if (error) throw error;
