@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
+import { Route as EmailVerifiedRouteImport } from './routes/email-verified';
 import { Route as EmailConfirmationRouteImport } from './routes/email-confirmation';
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated';
 import { Route as AuthRouteImport } from './routes/_auth';
@@ -26,6 +27,11 @@ import { Route as AuthenticatedFolderFolderIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedBrideDetailBrideIdRouteImport } from './routes/_authenticated/bride-detail.$brideId';
 import { Route as AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRouteImport } from './routes/_authenticated/folder-details.$folderId.subcategory.$subcategoryId';
 
+const EmailVerifiedRoute = EmailVerifiedRouteImport.update({
+  id: '/email-verified',
+  path: '/email-verified',
+  getParentRoute: () => rootRouteImport,
+} as any);
 const EmailConfirmationRoute = EmailConfirmationRouteImport.update({
   id: '/email-confirmation',
   path: '/email-confirmation',
@@ -113,6 +119,7 @@ const AuthenticatedFolderDetailsFolderIdSubcategorySubcategoryIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/email-confirmation': typeof EmailConfirmationRoute;
+  '/email-verified': typeof EmailVerifiedRoute;
   '/forgot-password': typeof AuthForgotPasswordRoute;
   '/reset-password': typeof AuthResetPasswordRoute;
   '/sign-in': typeof AuthSignInRoute;
@@ -129,6 +136,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/email-confirmation': typeof EmailConfirmationRoute;
+  '/email-verified': typeof EmailVerifiedRoute;
   '/forgot-password': typeof AuthForgotPasswordRoute;
   '/reset-password': typeof AuthResetPasswordRoute;
   '/sign-in': typeof AuthSignInRoute;
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren;
   '/_authenticated': typeof AuthenticatedRouteWithChildren;
   '/email-confirmation': typeof EmailConfirmationRoute;
+  '/email-verified': typeof EmailVerifiedRoute;
   '/_auth/forgot-password': typeof AuthForgotPasswordRoute;
   '/_auth/reset-password': typeof AuthResetPasswordRoute;
   '/_auth/sign-in': typeof AuthSignInRoute;
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/email-confirmation'
+    | '/email-verified'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/email-confirmation'
+    | '/email-verified'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -200,6 +211,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_authenticated'
     | '/email-confirmation'
+    | '/email-verified'
     | '/_auth/forgot-password'
     | '/_auth/reset-password'
     | '/_auth/sign-in'
@@ -219,10 +231,18 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren;
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren;
   EmailConfirmationRoute: typeof EmailConfirmationRoute;
+  EmailVerifiedRoute: typeof EmailVerifiedRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/email-verified': {
+      id: '/email-verified';
+      path: '/email-verified';
+      fullPath: '/email-verified';
+      preLoaderRoute: typeof EmailVerifiedRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/email-confirmation': {
       id: '/email-confirmation';
       path: '/email-confirmation';
@@ -387,6 +407,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   EmailConfirmationRoute: EmailConfirmationRoute,
+  EmailVerifiedRoute: EmailVerifiedRoute,
 };
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
