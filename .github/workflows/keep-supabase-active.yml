@@ -24,7 +24,7 @@ jobs:
             exit 1
           fi
           
-          HEALTH_RESPONSE=$(curl -s -w "\n%{http_code}" -L "${API_URL}/health" 2>&1 || echo -e "\n000")
+          HEALTH_RESPONSE=$(curl -s -w "\n%{http_code}" "${API_URL}/health" 2>&1 || echo -e "\n000")
           HEALTH_STATUS=$(echo "$HEALTH_RESPONSE" | tail -n1)
           
           if [ "$HEALTH_STATUS" -eq 200 ]; then
