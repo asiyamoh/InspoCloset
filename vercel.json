@@ -4,5 +4,11 @@
       "main": false,
       "staging": true
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
